@@ -2,7 +2,7 @@
     "name": "Seventh.Core",
     "rootNamespace": "Seventh.Core",
     "references": [
-        ""
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
