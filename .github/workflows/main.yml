@@ -49,12 +49,44 @@ jobs:
           zip -r ../ComigoMiauPode-${{ matrix.targetPlatform }}.zip ${{ matrix.targetPlatform }}
           cd ..
 
-      # Faz o upload do build como artefato do GitHub Actions
+      # Faz o upload do build temporariamente como artefato do GitHub Actions
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ComigoMiauPode-${{ matrix.targetPlatform }}
           path: ComigoMiauPode-${{ matrix.targetPlatform }}.zip
+
+  release:
+    name: Create GitHub Release and Notify
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Baixa todos os artefatos compilados na etapa anterior
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      # Cria a Release no GitHub, gera as Notas de Versão automáticas e anexa os ZIPs
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Versão v1.0.${{ github.run_number }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            artifacts/ComigoMiauPode-WebGL.zip
+            artifacts/ComigoMiauPode-StandaloneWindows64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Obtém a data e hora ajustadas para o timezone de São Paulo (UTC-3)
       - name: Get current date and time
@@ -63,7 +95,7 @@ jobs:
           echo "date=$(TZ='America/Sao_Paulo' date +'%d/%m/%Y')" >> $GITHUB_OUTPUT
           echo "datetime=$(TZ='America/Sao_Paulo' date +'%d/%m/%Y %H:%M')" >> $GITHUB_OUTPUT
 
-      # Envia a notificação customizada para o Discord via Webhook
+      # Envia a notificação unificada dos builds de WebGL e Windows no Discord
       - name: Send Discord notification
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
@@ -73,8 +105,8 @@ jobs:
                  -d '{
                    "embeds": [
                      {
-                       "title": "📢 Nova versão disponível (${{ matrix.targetPlatform }})",
-                       "description": "**Projeto:** Comigo Miau Pode\n**Versão:** v1.0.${{ github.run_number }}\n**Plataforma:** ${{ matrix.targetPlatform }}\n**Issues:** https://github.com/MurilloYonamine/7th-Senac-Jam/issues/new\n**Data:** ${{ steps.date.outputs.date }}",
+                       "title": "📢 Nova versão disponível (WebGL & StandaloneWindows64)",
+                       "description": "**Projeto:** Comigo Miau Pode\n**Versão:** v1.0.${{ github.run_number }}\n**Plataformas:** WebGL & StandaloneWindows64\n**Link:** https://github.com/${{ github.repository }}/releases/tag/v1.0.${{ github.run_number }}\n**Issues:** https://github.com/MurilloYonamine/7th-Senac-Jam/issues/new\n**Data:** ${{ steps.date.outputs.date }}",
                        "color": 3066993,
                        "footer": {
                          "text": "${{ steps.date.outputs.datetime }}"
