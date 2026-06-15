@@ -42,19 +42,19 @@ jobs:
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
 
-      # Compacta o build resultante em um arquivo ZIP
+      # Compacta o build resultante em um arquivo ZIP com a versão no nome
       - name: Zip Build Output
         run: |
           cd build
-          zip -r ../ComigoMiauPode-${{ matrix.targetPlatform }}.zip ${{ matrix.targetPlatform }}
+          zip -r ../ComigoMiauPode-v1.0.${{ github.run_number }}-${{ matrix.targetPlatform }}.zip ${{ matrix.targetPlatform }}
           cd ..
 
       # Faz o upload do build temporariamente como artefato do GitHub Actions
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ComigoMiauPode-${{ matrix.targetPlatform }}
-          path: ComigoMiauPode-${{ matrix.targetPlatform }}.zip
+          name: ComigoMiauPode-v1.0.${{ github.run_number }}-${{ matrix.targetPlatform }}
+          path: ComigoMiauPode-v1.0.${{ github.run_number }}-${{ matrix.targetPlatform }}.zip
 
   release:
     name: Create GitHub Release and Notify
@@ -83,8 +83,8 @@ jobs:
           prerelease: false
           generate_release_notes: true
           files: |
-            artifacts/ComigoMiauPode-WebGL.zip
-            artifacts/ComigoMiauPode-StandaloneWindows64.zip
+            artifacts/ComigoMiauPode-v1.0.${{ github.run_number }}-WebGL.zip
+            artifacts/ComigoMiauPode-v1.0.${{ github.run_number }}-StandaloneWindows64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
