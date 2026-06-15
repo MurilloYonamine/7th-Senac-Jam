@@ -1,0 +1,88 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        targetPlatform:
+          - WebGL
+          - StandaloneWindows64
+    steps:
+      # Checkout do código fonte
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      # Restaura/Salva cache da pasta Library para acelerar o build
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+
+      # Executa a compilação do Unity
+      - name: Build Unity Project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+
+      # Compacta o build resultante em um arquivo ZIP
+      - name: Zip Build Output
+        run: |
+          cd build
+          zip -r ../ComigoMiauPode-${{ matrix.targetPlatform }}.zip ${{ matrix.targetPlatform }}
+          cd ..
+
+      # Faz o upload do build como artefato do GitHub Actions
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ComigoMiauPode-${{ matrix.targetPlatform }}
+          path: ComigoMiauPode-${{ matrix.targetPlatform }}.zip
+
+      # Obtém a data e hora ajustadas para o timezone de São Paulo (UTC-3)
+      - name: Get current date and time
+        id: date
+        run: |
+          echo "date=$(TZ='America/Sao_Paulo' date +'%d/%m/%Y')" >> $GITHUB_OUTPUT
+          echo "datetime=$(TZ='America/Sao_Paulo' date +'%d/%m/%Y %H:%M')" >> $GITHUB_OUTPUT
+
+      # Envia a notificação customizada para o Discord via Webhook
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          if [ -n "$DISCORD_WEBHOOK" ]; then
+            curl -H "Content-Type: application/json" \
+                 -d '{
+                   "embeds": [
+                     {
+                       "title": "📢 Nova versão disponível (${{ matrix.targetPlatform }})",
+                       "description": "**Projeto:** Comigo Miau Pode\n**Versão:** v1.0.${{ github.run_number }}\n**Plataforma:** ${{ matrix.targetPlatform }}\n**Issues:** https://github.com/MurilloYonamine/7th-Senac-Jam/issues/new\n**Data:** ${{ steps.date.outputs.date }}",
+                       "color": 3066993,
+                       "footer": {
+                         "text": "${{ steps.date.outputs.datetime }}"
+                       }
+                     }
+                   ]
+                 }' \
+                 "$DISCORD_WEBHOOK"
+          else
+            echo "Discord Webhook URL not set. Skipping notification."
+          fi
