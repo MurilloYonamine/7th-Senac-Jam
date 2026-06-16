@@ -40,7 +40,7 @@ namespace Seventh.Core.Services
                 return (T)service;
             }
 
-            Debug.LogError($" {TAG} Serviço do tipo {type} não foi encontrado.");
+            Debug.LogError($"{TAG} Serviço do tipo {type} não foi encontrado.");
             return default;
         }
 

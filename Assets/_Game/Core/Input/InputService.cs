@@ -49,7 +49,7 @@ namespace Seventh.Core.Input
             }
 
             isAttacking = _attackAction.triggered;
-            attackDirection = _attackAction.ReadValue<Vector2>();
+            attackDirection = Vector2.zero;
         }
 
         public void GetDashInput(out bool isDashing)
