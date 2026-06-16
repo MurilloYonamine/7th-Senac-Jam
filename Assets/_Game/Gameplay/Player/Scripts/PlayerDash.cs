@@ -2,6 +2,7 @@ using System.Collections;
 using DG.Tweening;
 using Seventh.Core.Events;
 using Seventh.Core.Services;
+using AudioSettings = Seventh.Core.Services.AudioSettings;
 using UnityEngine;
 using Unity.Cinemachine;
 
@@ -13,12 +14,18 @@ namespace Seventh.Gameplay.Player
         private IAudioService _audioService;
         private SpriteRenderer _spriteRenderer;
         private CinemachineImpulseSource _impulseSource;
+        private Coroutine _flashCoroutine;
+        private Material _originalMaterial;
+        private Material _currentFlashMaterial;
 
         [Header("Dash Settings")]
-        [SerializeField] private AudioClip _dashSFX;
         [SerializeField] private float _dashDistance = 5;
         [SerializeField] private float _dashDuration = 0.2f;
         [SerializeField] private float _dashCooldown = 1f;
+
+        [Header("Audio Settings")]
+        [SerializeField] private AudioClip _dashSFX;
+        [Range(0f, 1f)][SerializeField] private float _dashSFXVolume = 1f;
         private float _dashCooldownTimer = 0f;
         private Vector2 _movementInput;
 
@@ -35,6 +42,10 @@ namespace Seventh.Gameplay.Player
             _audioService = ServiceLocator.Get<IAudioService>();
             _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             _impulseSource = GetComponent<CinemachineImpulseSource>();
+            if (_spriteRenderer != null)
+            {
+                _originalMaterial = _spriteRenderer.material;
+            }
         }
 
         private void Update()
@@ -70,6 +81,11 @@ namespace Seventh.Gameplay.Player
         {
             Vector3 direction = GetDashDirection();
             
+            if (_audioService != null && _dashSFX != null)
+            {
+                _audioService.PlaySFX(_dashSFX, new AudioSettings(volumeOffset: _dashSFXVolume - 1f));
+            }
+            
             ExecuteDashMovement(direction);
             ApplyDashEffects(direction);
             StartCooldown();
@@ -99,9 +115,23 @@ namespace Seventh.Gameplay.Player
         private void ApplyDashEffects(Vector3 direction)
         {
             ApplySquashAndStretch(direction);
-            StartCoroutine(FlashRoutine(0.06f));
+            
+            if (_flashCoroutine != null)
+            {
+                StopCoroutine(_flashCoroutine);
+                if (_spriteRenderer != null && _originalMaterial != null)
+                {
+                    _spriteRenderer.material = _originalMaterial;
+                }
+                if (_currentFlashMaterial != null)
+                {
+                    Destroy(_currentFlashMaterial);
+                    _currentFlashMaterial = null;
+                }
+            }
+            _flashCoroutine = StartCoroutine(FlashRoutine(0.06f));
+            
             StartCoroutine(SpawnAfterimageRoutine());
-
             _impulseSource?.GenerateImpulse();
         }
 
@@ -128,15 +158,33 @@ namespace Seventh.Gameplay.Player
 
         private IEnumerator FlashRoutine(float duration)
         {
-            Material originalMaterial = _spriteRenderer.material;
-            Material flashMaterial = new Material(Shader.Find("GUI/Text Shader"));
-            flashMaterial.color = Color.white;
+            if (_spriteRenderer == null) yield break;
 
-            _spriteRenderer.material = flashMaterial;
+            _currentFlashMaterial = new Material(Shader.Find("GUI/Text Shader"));
+            _currentFlashMaterial.color = Color.white;
+
+            _spriteRenderer.material = _currentFlashMaterial;
             yield return new WaitForSeconds(duration);
-            _spriteRenderer.material = originalMaterial;
 
-            Destroy(flashMaterial);
+            if (_spriteRenderer != null && _originalMaterial != null)
+            {
+                _spriteRenderer.material = _originalMaterial;
+            }
+
+            if (_currentFlashMaterial != null)
+            {
+                Destroy(_currentFlashMaterial);
+                _currentFlashMaterial = null;
+            }
+            _flashCoroutine = null;
+        }
+
+        private void OnDestroy()
+        {
+            if (_currentFlashMaterial != null)
+            {
+                Destroy(_currentFlashMaterial);
+            }
         }
 
         private IEnumerator SpawnAfterimageRoutine()

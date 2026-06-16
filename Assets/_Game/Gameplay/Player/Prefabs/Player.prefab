@@ -540,7 +540,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8762896975328446789}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -706,8 +706,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 946dd7a77fb4bb848a76f90f0a23f282, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Player.PlayerMovement
-  _walkSFX: []
   _moveSpeed: 5
+  _walkSFX:
+  - {fileID: 8300000, guid: b69b4096ea92fe64480673b4aa9b95b3, type: 3}
+  - {fileID: 8300000, guid: 70cec1a32b6a3394198b23487ccbe9b4, type: 3}
+  _walkSFXVolume: 0.15
   _moveDustVFX: {fileID: 6525484709667199232}
   _dustSpawnRate: 15
 --- !u!114 &5572399904698573707
@@ -746,10 +749,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee184458dd49bb4d9b47e23607d8ecc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Player.PlayerDash
-  _dashSFX: {fileID: 0}
   _dashDistance: 5
   _dashDuration: 0.2
   _dashCooldown: 0.5
+  _dashSFX: {fileID: 8300000, guid: ee08cf6d19f4ff94cb4c382f0ae33604, type: 3}
+  _dashSFXVolume: 0.1
   _ghostColor: {r: 1, g: 0.89299846, b: 0, a: 0.5}
   _ghostDelay: 0.04
   _ghostFadeDuration: 0.3
@@ -835,8 +839,10 @@ MonoBehaviour:
   _vfxDuration: 0.5
   _vfxSpawnOffset: 0
   _parentVFXToPlayer: 1
-  _attackSFXNormal: {fileID: 0}
-  _attackSFXHeavy: {fileID: 0}
+  _attackSFXNormal: {fileID: 8300000, guid: d70989b1898a42d4c96a5bcdd82521f7, type: 3}
+  _attackSFXNormalVolume: 0.3
+  _attackSFXHeavy: {fileID: 8300000, guid: a94e169ef0446564f8d4db9ccf616d4a, type: 3}
+  _attackSFXHeavyVolume: 0.1
   _comboResetTime: 0.8
   _combo3ScaleMultiplier: 1.5
   _combo3OffsetMultiplier: 2
@@ -873,3 +879,12 @@ MonoBehaviour:
   _healOnKill: 0
   _healPerDefeat: 10
   _healPerHit: 8
+  _hurtSFX: {fileID: 0}
+  _hurtSFXVolume: 1
+  _healSFX: {fileID: 0}
+  _healSFXVolume: 1
+  _deathSFX: {fileID: 0}
+  _deathSFXVolume: 1
+  _lowHealthWarningSFX: {fileID: 8300000, guid: 6d7c463ef1698774b8a0c8329ad2867a, type: 3}
+  _lowHealthWarningSFXVolume: 1
+  _lowHealthWarningThreshold: 0.5
