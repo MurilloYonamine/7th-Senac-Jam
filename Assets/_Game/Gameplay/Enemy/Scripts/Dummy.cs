@@ -41,6 +41,8 @@ namespace Seventh.Gameplay.Enemies
         [Range(0f, 1f)][SerializeField] private float _hitHeavySFXVolume = 1f;
 
         private IAudioService _audioService;
+        private Material _originalMaterial;
+        private Material _currentFlashMaterial;
 
         protected override void Awake()
         {
@@ -55,6 +57,10 @@ namespace Seventh.Gameplay.Enemies
             _hasLightParam = HasParameter("IsLight");
             _hasMediumParam = HasParameter("IsMedium");
             _hasHeavyParam = HasParameter("IsHeavy");
+            if (_spriteRenderer != null)
+            {
+                _originalMaterial = _spriteRenderer.material;
+            }
         }
 
         private bool HasParameter(string paramName)
@@ -118,6 +124,15 @@ namespace Seventh.Gameplay.Enemies
             if (_flashCoroutine != null)
             {
                 StopCoroutine(_flashCoroutine);
+                if (_spriteRenderer != null && _originalMaterial != null)
+                {
+                    _spriteRenderer.material = _originalMaterial;
+                }
+                if (_currentFlashMaterial != null)
+                {
+                    Destroy(_currentFlashMaterial);
+                    _currentFlashMaterial = null;
+                }
             }
             _flashCoroutine = StartCoroutine(FlashRoutine(_flashDuration));
 
@@ -183,16 +198,31 @@ namespace Seventh.Gameplay.Enemies
         {
             if (_spriteRenderer == null) yield break;
 
-            Material originalMaterial = _spriteRenderer.material;
-            Material flashMaterial = new Material(Shader.Find("GUI/Text Shader"));
-            flashMaterial.color = Color.white;
+            _currentFlashMaterial = new Material(Shader.Find("GUI/Text Shader"));
+            _currentFlashMaterial.color = Color.white;
 
-            _spriteRenderer.material = flashMaterial;
+            _spriteRenderer.material = _currentFlashMaterial;
             yield return new WaitForSeconds(duration);
-            _spriteRenderer.material = originalMaterial;
 
-            Destroy(flashMaterial);
+            if (_spriteRenderer != null && _originalMaterial != null)
+            {
+                _spriteRenderer.material = _originalMaterial;
+            }
+
+            if (_currentFlashMaterial != null)
+            {
+                Destroy(_currentFlashMaterial);
+                _currentFlashMaterial = null;
+            }
             _flashCoroutine = null;
+        }
+
+        private void OnDestroy()
+        {
+            if (_currentFlashMaterial != null)
+            {
+                Destroy(_currentFlashMaterial);
+            }
         }
 
         private IEnumerator HitstopRoutine(float duration)

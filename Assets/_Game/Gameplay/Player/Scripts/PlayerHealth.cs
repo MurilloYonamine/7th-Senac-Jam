@@ -25,10 +25,14 @@ namespace Seventh.Gameplay.Player
         [Range(0f, 1f)][SerializeField] private float _healSFXVolume = 1f;
         [SerializeField] private AudioClip _deathSFX;
         [Range(0f, 1f)][SerializeField] private float _deathSFXVolume = 1f;
+        [SerializeField] private AudioClip _lowHealthWarningSFX;
+        [Range(0f, 1f)][SerializeField] private float _lowHealthWarningSFXVolume = 1f;
+        [Range(0f, 1f)][SerializeField] private float _lowHealthWarningThreshold = 0.5f;
 
         private IEventBus _eventBus;
         private IAudioService _audioService;
         private Coroutine _poisonCoroutine;
+        private bool _isLowHealthWarningPlaying;
 
         protected override void Awake()
         {
@@ -40,6 +44,7 @@ namespace Seventh.Gameplay.Player
             _eventBus = ServiceLocator.Get<IEventBus>();
             _audioService = ServiceLocator.Get<IAudioService>();
             PublishHealth();
+            UpdateLowHealthWarning();
 
             _eventBus?.Subscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
 
@@ -55,12 +60,18 @@ namespace Seventh.Gameplay.Player
                 StopCoroutine(_poisonCoroutine);
                 _poisonCoroutine = null;
             }
+
+            if (_isLowHealthWarningPlaying && _audioService != null && _lowHealthWarningSFX != null)
+            {
+                _audioService.StopSFX(_lowHealthWarningSFX);
+            }
         }
 
         protected override void HandleHealthChanged(int current, int max)
         {
             base.HandleHealthChanged(current, max);
             PublishHealth();
+            UpdateLowHealthWarning();
         }
 
         private void PublishHealth()
@@ -123,9 +134,41 @@ namespace Seventh.Gameplay.Player
         protected override void Die()
         {
             base.Die();
+            if (_isLowHealthWarningPlaying && _audioService != null && _lowHealthWarningSFX != null)
+            {
+                _isLowHealthWarningPlaying = false;
+                _audioService.StopSFX(_lowHealthWarningSFX);
+            }
             if (_audioService != null && _deathSFX != null)
             {
                 _audioService.PlaySFX(_deathSFX, new AudioSettings(volumeOffset: _deathSFXVolume - 1f));
+            }
+        }
+
+        private void UpdateLowHealthWarning()
+        {
+            if (_audioService == null || _lowHealthWarningSFX == null) return;
+
+            float healthPercentage = MaxHealth > 0 ? (float)CurrentHealth / MaxHealth : 1f;
+
+            if (CurrentHealth > 0 && healthPercentage <= _lowHealthWarningThreshold)
+            {
+                if (!_isLowHealthWarningPlaying)
+                {
+                    _isLowHealthWarningPlaying = true;
+                    _audioService.PlaySFX(_lowHealthWarningSFX, new AudioSettings(
+                        volumeOffset: _lowHealthWarningSFXVolume - 1f,
+                        loop: true
+                    ));
+                }
+            }
+            else
+            {
+                if (_isLowHealthWarningPlaying)
+                {
+                    _isLowHealthWarningPlaying = false;
+                    _audioService.StopSFX(_lowHealthWarningSFX);
+                }
             }
         }
     }
