@@ -1,3 +1,4 @@
+using UnityEngine;
 using Seventh.Core.Constants;
 
 namespace Seventh.Core.Events
@@ -9,6 +10,14 @@ namespace Seventh.Core.Events
         public GameStateChangedEvent(GameState previous, GameState current) {
             PreviousState = previous;
             CurrentState = current;
+        }
+    }
+
+    public readonly struct EnemyDefeatedEvent {
+        public readonly GameObject EnemyGameObject;
+
+        public EnemyDefeatedEvent(GameObject enemy) {
+            EnemyGameObject = enemy;
         }
     }
 }
