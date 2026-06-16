@@ -17,6 +17,8 @@ namespace Seventh.Gameplay.Player
         [SerializeField] private float _moveSpeed = 5f;
         private Vector2 _movementInput;
 
+        public Vector2 FacingDirection { get; private set; } = Vector2.right;
+
         [Header("VFX Settings")]
         [SerializeField] private VisualEffect _moveDustVFX;
         [SerializeField] private float _dustSpawnRate = 15f;
@@ -36,6 +38,12 @@ namespace Seventh.Gameplay.Player
         private void Move()
         {
             _movementInput = _inputService.GetMovementInput();
+
+            if (_movementInput.sqrMagnitude > 0.01f)
+            {
+                FacingDirection = _movementInput.normalized;
+            }
+
             Vector3 movement = new Vector3(_movementInput.x, _movementInput.y) * _moveSpeed * Time.deltaTime;
             transform.position += movement;
 
