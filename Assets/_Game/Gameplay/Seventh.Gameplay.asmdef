@@ -2,7 +2,10 @@
     "name": "Seventh.Gameplay",
     "rootNamespace": "Seventh.Gameplay",
     "references": [
-        ""
+        "Seventh.Core",
+        "DOTween.Modules",
+        "Unity.Cinemachine",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
