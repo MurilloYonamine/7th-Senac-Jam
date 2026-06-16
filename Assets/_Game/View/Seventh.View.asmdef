@@ -2,7 +2,10 @@
     "name": "Seventh.View",
     "rootNamespace": "Seventh.View",
     "references": [
-        ""
+        "Seventh.Core",
+        "DOTween.Modules",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
