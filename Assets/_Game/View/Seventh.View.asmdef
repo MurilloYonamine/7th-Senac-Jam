@@ -2,7 +2,8 @@
     "name": "Seventh.View",
     "rootNamespace": "Seventh.View",
     "references": [
-        ""
+        "Seventh.Core",
+        "DOTween.Modules"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
