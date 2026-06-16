@@ -1,5 +1,6 @@
 using System.Collections;
 using Seventh.Core.Services;
+using AudioSettings = Seventh.Core.Services.AudioSettings;
 using UnityEngine;
 using UnityEngine.VFX;
 using Unity.Cinemachine;
@@ -24,7 +25,9 @@ namespace Seventh.Gameplay.Player
 
         [Header("Audio Settings")]
         [SerializeField] private AudioClip _attackSFXNormal;
+        [Range(0f, 1f)][SerializeField] private float _attackSFXNormalVolume = 1f;
         [SerializeField] private AudioClip _attackSFXHeavy;
+        [Range(0f, 1f)][SerializeField] private float _attackSFXHeavyVolume = 1f;
 
         [Header("Combo Chain Settings")]
         [SerializeField] private float _comboResetTime = 1.0f;
@@ -166,9 +169,10 @@ namespace Seventh.Gameplay.Player
 
             // Play SFX
             AudioClip sfxToPlay = (_comboStep == 3 && _attackSFXHeavy != null) ? _attackSFXHeavy : _attackSFXNormal;
+            float sfxVolume = (_comboStep == 3) ? _attackSFXHeavyVolume : _attackSFXNormalVolume;
             if (sfxToPlay != null && _audioService != null)
             {
-                _audioService.PlaySFX(sfxToPlay);
+                _audioService.PlaySFX(sfxToPlay, new AudioSettings(volumeOffset: sfxVolume - 1f));
             }
 
             // Screen Shake (Cinemachine)

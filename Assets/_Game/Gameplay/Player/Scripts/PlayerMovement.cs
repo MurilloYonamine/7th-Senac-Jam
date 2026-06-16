@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Seventh.Core.Services;
+using AudioSettings = Seventh.Core.Services.AudioSettings;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -13,9 +14,12 @@ namespace Seventh.Gameplay.Player
         private PlayerAnimator _animator;
 
         [Header("Movement Settings")]
-        [SerializeField] private AudioClip[] _walkSFX;
         [SerializeField] private float _moveSpeed = 5f;
         private Vector2 _movementInput;
+
+        [Header("Audio Settings")]
+        [SerializeField] private AudioClip[] _walkSFX;
+        [Range(0f, 1f)][SerializeField] private float _walkSFXVolume = 1f;
 
         public Vector2 FacingDirection { get; private set; } = Vector2.right;
 
@@ -68,10 +72,10 @@ namespace Seventh.Gameplay.Player
 
         public void PlayMoveSFX()
         {
-            if (_walkSFX.Length == 0) return;
+            if (_walkSFX.Length == 0 || _audioService == null) return;
 
             int index = Random.Range(0, _walkSFX.Length);
-            _audioService.PlaySFX(_walkSFX[index]);
+            _audioService.PlaySFX(_walkSFX[index], new AudioSettings(volumeOffset: _walkSFXVolume - 1f));
         }
     }
 }

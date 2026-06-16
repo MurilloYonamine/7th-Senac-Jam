@@ -2,6 +2,7 @@ using System.Collections;
 using DG.Tweening;
 using Seventh.Core.Events;
 using Seventh.Core.Services;
+using AudioSettings = Seventh.Core.Services.AudioSettings;
 using UnityEngine;
 using Unity.Cinemachine;
 
@@ -15,10 +16,13 @@ namespace Seventh.Gameplay.Player
         private CinemachineImpulseSource _impulseSource;
 
         [Header("Dash Settings")]
-        [SerializeField] private AudioClip _dashSFX;
         [SerializeField] private float _dashDistance = 5;
         [SerializeField] private float _dashDuration = 0.2f;
         [SerializeField] private float _dashCooldown = 1f;
+
+        [Header("Audio Settings")]
+        [SerializeField] private AudioClip _dashSFX;
+        [Range(0f, 1f)][SerializeField] private float _dashSFXVolume = 1f;
         private float _dashCooldownTimer = 0f;
         private Vector2 _movementInput;
 
@@ -69,6 +73,11 @@ namespace Seventh.Gameplay.Player
         private void StartDash()
         {
             Vector3 direction = GetDashDirection();
+            
+            if (_audioService != null && _dashSFX != null)
+            {
+                _audioService.PlaySFX(_dashSFX, new AudioSettings(volumeOffset: _dashSFXVolume - 1f));
+            }
             
             ExecuteDashMovement(direction);
             ApplyDashEffects(direction);

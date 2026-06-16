@@ -1,6 +1,8 @@
 using System.Collections;
 using DG.Tweening;
 using Seventh.Gameplay.Health;
+using Seventh.Core.Services;
+using AudioSettings = Seventh.Core.Services.AudioSettings;
 using UnityEngine;
 
 namespace Seventh.Gameplay.Enemies
@@ -24,12 +26,21 @@ namespace Seventh.Gameplay.Enemies
         private Coroutine _hitstopCoroutine;
 
         [Header("Knockback Settings")]
-        [SerializeField] private float _heavyKnockback = 0.6f;
         [SerializeField] private float _knockbackDuration = 0.12f;
 
         [Header("Juice Settings")]
         [SerializeField] private float _flashDuration = 0.08f;
         [SerializeField] private float _hitstopDuration = 0.07f;
+
+        [Header("Audio Settings")]
+        [SerializeField] private AudioClip _hitLightSFX;
+        [Range(0f, 1f)][SerializeField] private float _hitLightSFXVolume = 1f;
+        [SerializeField] private AudioClip _hitMediumSFX;
+        [Range(0f, 1f)][SerializeField] private float _hitMediumSFXVolume = 1f;
+        [SerializeField] private AudioClip _hitHeavySFX;
+        [Range(0f, 1f)][SerializeField] private float _hitHeavySFXVolume = 1f;
+
+        private IAudioService _audioService;
 
         protected override void Awake()
         {
@@ -40,6 +51,7 @@ namespace Seventh.Gameplay.Enemies
 
         private void Start()
         {
+            _audioService = ServiceLocator.Get<IAudioService>();
             _hasLightParam = HasParameter("IsLight");
             _hasMediumParam = HasParameter("IsMedium");
             _hasHeavyParam = HasParameter("IsHeavy");
@@ -58,6 +70,33 @@ namespace Seventh.Gameplay.Enemies
         protected override void HandleDamageTaken(DamageInfo damageInfo)
         {
             base.HandleDamageTaken(damageInfo);
+
+            if (_audioService != null)
+            {
+                AudioClip sfxToPlay = null;
+                float volume = 1f;
+
+                if (damageInfo.Intensity == HitIntensity.Heavy)
+                {
+                    sfxToPlay = _hitHeavySFX;
+                    volume = _hitHeavySFXVolume;
+                }
+                else if (damageInfo.Intensity == HitIntensity.Medium)
+                {
+                    sfxToPlay = _hitMediumSFX;
+                    volume = _hitMediumSFXVolume;
+                }
+                else
+                {
+                    sfxToPlay = _hitLightSFX;
+                    volume = _hitLightSFXVolume;
+                }
+
+                if (sfxToPlay != null)
+                {
+                    _audioService.PlaySFX(sfxToPlay, new AudioSettings(volumeOffset: volume - 1f, spatialPosition: transform.position));
+                }
+            }
 
             if (_animator == null) return;
 
