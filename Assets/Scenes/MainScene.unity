@@ -710,7 +710,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.9
+  m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -754,6 +754,54 @@ Transform:
   m_Children:
   - {fileID: 1005029571}
   m_Father: {fileID: 977658314}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &728785183
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 728785185}
+  - component: {fileID: 728785184}
+  m_Layer: 0
+  m_Name: SceneAudioController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &728785184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728785183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49d1110205dbea345a6b1c38a4f4476a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Audio.SceneAudioController
+  _musicTrack: {fileID: 8300000, guid: a27f634dbc0b94f46a8eddfbae07174d, type: 3}
+  _musicVolume: 0.25
+  _ambientTrack: {fileID: 0}
+  _ambientVolume: 1
+--- !u!4 &728785185
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 728785183}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.93977, y: -0.66109, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &793585543
 GameObject:
@@ -1628,7 +1676,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.9
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1651,6 +1699,22 @@ MonoBehaviour:
   _dangerSprite: {fileID: 5975432634954582634, guid: 1f6ad068fde0c18418d08bb55f8c900b, type: 3}
   _dangerThreshold: 0.3
   _mediumThreshold: 0.7
+  _shakePanel: {fileID: 1394784396}
+  _shakeDuration: 0.2
+  _shakeStrength: 8
+  _shakeVibrato: 15
+  _facePunchDuration: 0.3
+  _facePunchScaleMultiplier: 0.1
+  _criticalPulseScaleMultiplier: 0.15
+  _criticalPulseDuration: 0.5
+  _healFlashColor: {r: 0, g: 1, b: 0.5, a: 1}
+  _healFlashDuration: 0.15
+  _sceneVolume: {fileID: 1618800720}
+  _useVignetteJuice: 1
+  _damageVignetteColor: {r: 1, g: 0, b: 0, a: 1}
+  _maxVignetteIntensity: 0.5
+  _vignetteStartThreshold: 0.6
+  _vignetteTransitionDuration: 0.3
 --- !u!1 &2143807270
 GameObject:
   m_ObjectHideFlags: 0
@@ -1850,6 +1914,18 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 372563036502602693, guid: 867dccb5125c48741a2c0bedbdf36007, type: 3}
+      propertyPath: _hitHeavySFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 76766d6fbe1173f498891917ddfa912b, type: 3}
+    - target: {fileID: 372563036502602693, guid: 867dccb5125c48741a2c0bedbdf36007, type: 3}
+      propertyPath: _hitLightSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 3b30ee1f176da704bb535572170ef7c6, type: 3}
+    - target: {fileID: 372563036502602693, guid: 867dccb5125c48741a2c0bedbdf36007, type: 3}
+      propertyPath: _hitMediumSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 464e083d87cc0354887d1c4812935f1f, type: 3}
     - target: {fileID: 3483297343256756844, guid: 867dccb5125c48741a2c0bedbdf36007, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.4
@@ -1915,3 +1991,4 @@ SceneRoots:
   - {fileID: 793585545}
   - {fileID: 1407389819}
   - {fileID: 977658314}
+  - {fileID: 728785185}
