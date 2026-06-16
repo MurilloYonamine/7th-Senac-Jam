@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Style src="project://database/Assets/_Game/View/Menu/MainMenu.uss" />
+    <ui:VisualElement name="ScreenContainer" class="modal-backdrop">
+        <!-- Título Temporário -->
+        <ui:Label text="OPÇÕES" class="logo-text" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); font-size: 72px; margin-bottom: 50px;" />
+        
+        <!-- Botão Voltar -->
+        <ui:Button text="Voltar" name="BtnBack" class="menu-button" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 320px; font-size: 56px;" />
+    </ui:VisualElement>
+</ui:UXML>

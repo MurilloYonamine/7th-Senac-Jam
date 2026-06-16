@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Game/View/Menu/MainMenu.uss?fileID=7433441132597879392&amp;guid=0a5d6693eac14a14396c2c21f8fcd642&amp;type=3#MainMenu"/>
+    <ui:VisualElement name="ScreenContainer" class="screen-container">
+        <ui:VisualElement name="MenuPanel" class="menu-panel" style="padding-top: 30px; width: 450px; padding-bottom: 30px;">
+            <ui:VisualElement name="LogoContainer" class="logo-container" style="-unity-text-align: middle-center; height: 380px;">
+                <ui:Label text="COMIGO&#10;MIAU&#10;PODE" name="LogoText" class="logo-text" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); font-size: 79px;"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="ButtonContainer" class="button-container" style="padding-top: 0; margin-top: 40px; height: 850px;">
+                <ui:Button text="Jogar" name="BtnPlay" class="menu-button" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 320px; font-size: 56px; margin-top: 15px; margin-bottom: 15px;"/>
+                <ui:Button text="Opções" name="BtnSettings" class="menu-button" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 320px; font-size: 56px; margin-top: 15px; margin-bottom: 15px;"/>
+                <ui:Button text="Créditos" name="BtnCredits" class="menu-button" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 320px; font-size: 56px; margin-top: 15px; margin-bottom: 15px;"/>
+                <ui:Button text="Sair" name="BtnQuit" class="menu-button" style="-unity-font-style: bold; -unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 320px; font-size: 56px; margin-top: 15px; margin-bottom: 15px;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

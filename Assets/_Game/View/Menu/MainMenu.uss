@@ -1,0 +1,158 @@
+/* Container principal da tela (cobre 100% da tela) */
+.screen-container {
+    width: 100%;
+    height: 100%;
+    flex-direction: row;
+    background-color: rgba(0, 0, 0, 0); /* Transparente para mostrar o jogo ao fundo */
+}
+
+/* Painel lateral esquerdo (conforme a imagem de referência) */
+.menu-panel {
+    width: 35%;
+    min-width: 320px;
+    max-width: 450px;
+    height: 100%;
+    background-color: rgba(20, 20, 25, 0.9); /* Fundo escuro elegante e levemente translúcido */
+    padding: 80px 40px;
+    justify-content: space-between; /* Mantém logo em cima e botões embaixo */
+    border-right-width: 2px;
+    border-right-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Container do Logo (Topo) */
+.logo-container {
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Estilo do Logo (Texto temporário) */
+.logo-text {
+    font-size: 38px;
+    color: #ffffff;
+    -unity-font-style: bold;
+    letter-spacing: 4px;
+    -unity-text-align: middle-center;
+    /* Sombreamento sutil para destacar o texto */
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.5);
+}
+
+/* Container dos Botões (Parte inferior) */
+.button-container {
+    flex-grow: 0;
+    justify-content: flex-end;
+    align-items: center; /* Centraliza os botões horizontalmente no painel */
+    margin-bottom: 40px;
+}
+
+/* Estilo Base dos Botões */
+.menu-button {
+    width: 228px; /* 4x a largura original de 57px */
+    height: 128px; /* 4x a altura original de 32px */
+    margin: 8px 0;
+    padding: 10px;
+    font-size: 26px; /* Aumentado para combinar com o novo tamanho */
+    color: #ffffff;
+    -unity-font-style: bold;
+    border-width: 0;
+    border-radius: 0px; /* Definido como 0 pois a borda vem da Sprite */
+    background-color: rgba(0, 0, 0, 0); /* Torna o fundo padrão do botão transparente */
+    
+    /* === 1. IMAGEM DE FUNDO PADRÃO (ESTADO NORMAL / ESCURO) ===
+       Substitua o caminho abaixo pelo nome exato do seu arquivo de spritesheet.
+       Usamos '#escuro' para referenciar a sub-sprite correspondente fatiada na spritesheet. */
+    background-image: url('project://database/Assets/_Game/View/Menu/Sprites/ui_botao.ase#escuro');
+    
+    -unity-background-scale-mode: stretch-to-fill;
+    
+    /* Transições suaves ao passar o mouse */
+    transition-property: scale, -unity-background-image-tint-color;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out-sine;
+}
+
+/* === 3. ESTADO DE HOVER E FOCUS (PASSA O MOUSE OU SELECIONA COM GAMEPAD) === */
+.menu-button:hover,
+.menu-button:focus {
+    scale: 1.05; /* Aumenta ligeiramente o tamanho do botão */
+    color: #e0e0e0;
+    /* Substitua pelo nome da sub-sprite de hover */
+    background-image: url('project://database/Assets/_Game/View/Menu/Sprites/ui_botao.ase#meio_escuro');
+}
+
+/* === 4. ESTADO DE ACTIVE (CLIQUE - CLARO / PRESSIONADO) === */
+.menu-button:active {
+    scale: 0.96; /* Efeito visual de botão sendo pressionado para dentro */
+    color: #cccccc;
+    /* Substitua pelo nome da sub-sprite de clique */
+    background-image: url('project://database/Assets/_Game/View/Menu/Sprites/ui_botao.ase#claro');
+}
+
+/* === 5. FUNDO ESCURO E TRANSLÚCIDO PARA AS TELAS DE OPÇÕES/CRÉDITOS === */
+.modal-backdrop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 10, 15, 0.85); /* Fundo escuro translúcido para focar na tela */
+    justify-content: center;
+    align-items: center;
+}
+
+/* === 6. CLASSE PARA FONTE GRAPE SODA === */
+.grape-soda-font {
+    -unity-font-definition: url("project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&guid=cc26f4d30b86b7341a3126a1e92f2a95&type=3#GrapeSoda");
+}
+
+/* === 7. CAIXAS FÍSICAS INTERATIVAS DE CRÉDITOS === */
+.credit-tag {
+    position: absolute;
+    padding: 18px 30px;
+    color: #ffffff;
+    font-size: 36px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: url('project://database/Assets/_Game/View/Menu/Sprites/ui_botao.ase#escuro');
+    -unity-background-scale-mode: stretch-to-fill;
+    
+    /* Centraliza a caixa em relação ao seu ponto X */
+    translate: -50% 0;
+    
+    /* 9-slice para as bordas do botão ficarem perfeitas */
+    -unity-slice-left: 16;
+    -unity-slice-top: 16;
+    -unity-slice-right: 16;
+    -unity-slice-bottom: 16;
+    
+    transition-property: scale;
+    transition-duration: 0.1s;
+}
+
+.credit-tag:hover {
+    scale: 1.1; /* Aumenta sutilmente ao passar o mouse */
+    background-image: url('project://database/Assets/_Game/View/Menu/Sprites/ui_botao.ase#meio_escuro');
+}
+
+/* === 8. TEXTO DE CRÉDITO SEM FUNDO (TEXT-ONLY) === */
+.credit-text-only {
+    position: absolute;
+    padding: 10px;
+    color: #ffffff;
+    font-size: 48px; /* Aumentado o tamanho do texto */
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    background-color: rgba(0, 0, 0, 0);
+    background-image: none;
+    
+    /* Centraliza a caixa em relação ao seu ponto X */
+    translate: -50% 0;
+    
+    transition-property: scale, color;
+    transition-duration: 0.1s;
+}
+
+.credit-text-only:hover {
+    scale: 1.15; /* Zoom maior no texto ao passar o mouse */
+    color: #ffd800; /* Cor amarela sutil para destacar no hover */
+}
+
+
