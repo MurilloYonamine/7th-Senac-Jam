@@ -43,12 +43,14 @@ namespace Seventh.Core.Services
         public float Pitch; // Valor de pitch para a reprodução do áudio
         public float VolumeOffset; // ajuste relativo aplicado sobre o volume base de um som, em vez de definir um valor absoluto.
         public bool Loop; // Indica se o áudio deve ser reproduzido em loop
+        public Vector3? SpatialPosition; // Posição no espaço 3D para áudio posicional. Null para 2D.
 
-        public AudioSettings(float pitch = 1f, float volumeOffset = 0f, bool loop = false)
+        public AudioSettings(float pitch = 1f, float volumeOffset = 0f, bool loop = false, Vector3? spatialPosition = null)
         {
             Pitch = pitch;
             VolumeOffset = volumeOffset;
             Loop = loop;
+            SpatialPosition = spatialPosition;
         }
     }
 }
