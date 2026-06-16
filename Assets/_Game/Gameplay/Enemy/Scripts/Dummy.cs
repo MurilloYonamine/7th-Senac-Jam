@@ -1,5 +1,8 @@
 using System.Collections;
 using DG.Tweening;
+using Seventh.Gameplay.Health;
+using Seventh.Core.Services;
+using AudioSettings = Seventh.Core.Services.AudioSettings;
 using UnityEngine;
 
 namespace Seventh.Gameplay.Enemies
@@ -23,24 +26,41 @@ namespace Seventh.Gameplay.Enemies
         private Coroutine _hitstopCoroutine;
 
         [Header("Knockback Settings")]
-        [SerializeField] private float _heavyKnockback = 0.6f;
         [SerializeField] private float _knockbackDuration = 0.12f;
 
         [Header("Juice Settings")]
         [SerializeField] private float _flashDuration = 0.08f;
         [SerializeField] private float _hitstopDuration = 0.07f;
 
-        private void Awake()
+        [Header("Audio Settings")]
+        [SerializeField] private AudioClip _hitLightSFX;
+        [Range(0f, 1f)][SerializeField] private float _hitLightSFXVolume = 1f;
+        [SerializeField] private AudioClip _hitMediumSFX;
+        [Range(0f, 1f)][SerializeField] private float _hitMediumSFXVolume = 1f;
+        [SerializeField] private AudioClip _hitHeavySFX;
+        [Range(0f, 1f)][SerializeField] private float _hitHeavySFXVolume = 1f;
+
+        private IAudioService _audioService;
+        private Material _originalMaterial;
+        private Material _currentFlashMaterial;
+
+        protected override void Awake()
         {
+            base.Awake();
             _animator = GetComponent<Animator>();
             _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
         private void Start()
         {
+            _audioService = ServiceLocator.Get<IAudioService>();
             _hasLightParam = HasParameter("IsLight");
             _hasMediumParam = HasParameter("IsMedium");
             _hasHeavyParam = HasParameter("IsHeavy");
+            if (_spriteRenderer != null)
+            {
+                _originalMaterial = _spriteRenderer.material;
+            }
         }
 
         private bool HasParameter(string paramName)
@@ -53,9 +73,36 @@ namespace Seventh.Gameplay.Enemies
             return false;
         }
 
-        public override void TakeHit(int comboStep, Vector2 attackDirection)
+        protected override void HandleDamageTaken(DamageInfo damageInfo)
         {
-            base.TakeHit(comboStep, attackDirection);
+            base.HandleDamageTaken(damageInfo);
+
+            if (_audioService != null)
+            {
+                AudioClip sfxToPlay = null;
+                float volume = 1f;
+
+                if (damageInfo.Intensity == HitIntensity.Heavy)
+                {
+                    sfxToPlay = _hitHeavySFX;
+                    volume = _hitHeavySFXVolume;
+                }
+                else if (damageInfo.Intensity == HitIntensity.Medium)
+                {
+                    sfxToPlay = _hitMediumSFX;
+                    volume = _hitMediumSFXVolume;
+                }
+                else
+                {
+                    sfxToPlay = _hitLightSFX;
+                    volume = _hitLightSFXVolume;
+                }
+
+                if (sfxToPlay != null)
+                {
+                    _audioService.PlaySFX(sfxToPlay, new AudioSettings(volumeOffset: volume - 1f, spatialPosition: transform.position));
+                }
+            }
 
             if (_animator == null) return;
 
@@ -66,10 +113,10 @@ namespace Seventh.Gameplay.Enemies
             ResetAllBools();
 
             // Apply Knockback
-            if (comboStep == 3)
+            if (damageInfo.KnockbackForce > 0f)
             {
                 transform.DOKill(); // Stop any active movement tweens
-                transform.DOMove(transform.position + new Vector3(attackDirection.x, attackDirection.y, 0f) * _heavyKnockback, _knockbackDuration)
+                transform.DOMove(transform.position + new Vector3(damageInfo.HitDirection.x, damageInfo.HitDirection.y, 0f) * damageInfo.KnockbackForce, _knockbackDuration)
                     .SetEase(Ease.OutQuad);
             }
 
@@ -77,6 +124,15 @@ namespace Seventh.Gameplay.Enemies
             if (_flashCoroutine != null)
             {
                 StopCoroutine(_flashCoroutine);
+                if (_spriteRenderer != null && _originalMaterial != null)
+                {
+                    _spriteRenderer.material = _originalMaterial;
+                }
+                if (_currentFlashMaterial != null)
+                {
+                    Destroy(_currentFlashMaterial);
+                    _currentFlashMaterial = null;
+                }
             }
             _flashCoroutine = StartCoroutine(FlashRoutine(_flashDuration));
 
@@ -90,12 +146,12 @@ namespace Seventh.Gameplay.Enemies
             int targetHash = -1;
             bool hasParam = false;
 
-            if (comboStep == 3)
+            if (damageInfo.Intensity == HitIntensity.Heavy)
             {
                 targetHash = _isHeavyHash;
                 hasParam = _hasHeavyParam;
             }
-            else if (comboStep == 2)
+            else if (damageInfo.Intensity == HitIntensity.Medium)
             {
                 if (_hasMediumParam)
                 {
@@ -108,7 +164,7 @@ namespace Seventh.Gameplay.Enemies
                     hasParam = _hasLightParam;
                 }
             }
-            else // comboStep == 1
+            else // HitIntensity.Light
             {
                 targetHash = _isLightHash;
                 hasParam = _hasLightParam;
@@ -121,6 +177,8 @@ namespace Seventh.Gameplay.Enemies
                 _resetCoroutine = StartCoroutine(ResetBoolsAfterDelay(0.15f));
             }
         }
+
+
 
         private void ResetAllBools()
         {
@@ -140,16 +198,31 @@ namespace Seventh.Gameplay.Enemies
         {
             if (_spriteRenderer == null) yield break;
 
-            Material originalMaterial = _spriteRenderer.material;
-            Material flashMaterial = new Material(Shader.Find("GUI/Text Shader"));
-            flashMaterial.color = Color.white;
+            _currentFlashMaterial = new Material(Shader.Find("GUI/Text Shader"));
+            _currentFlashMaterial.color = Color.white;
 
-            _spriteRenderer.material = flashMaterial;
+            _spriteRenderer.material = _currentFlashMaterial;
             yield return new WaitForSeconds(duration);
-            _spriteRenderer.material = originalMaterial;
 
-            Destroy(flashMaterial);
+            if (_spriteRenderer != null && _originalMaterial != null)
+            {
+                _spriteRenderer.material = _originalMaterial;
+            }
+
+            if (_currentFlashMaterial != null)
+            {
+                Destroy(_currentFlashMaterial);
+                _currentFlashMaterial = null;
+            }
             _flashCoroutine = null;
+        }
+
+        private void OnDestroy()
+        {
+            if (_currentFlashMaterial != null)
+            {
+                Destroy(_currentFlashMaterial);
+            }
         }
 
         private IEnumerator HitstopRoutine(float duration)

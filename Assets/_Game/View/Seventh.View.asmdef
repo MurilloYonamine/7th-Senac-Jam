@@ -3,9 +3,12 @@
     "rootNamespace": "Seventh.View",
     "references": [
         "Seventh.Core",
+        "Seventh.Gameplay",
         "DOTween.Modules",
         "Unity.InputSystem",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
