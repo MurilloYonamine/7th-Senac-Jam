@@ -3,6 +3,7 @@
     "rootNamespace": "Seventh.View",
     "references": [
         "Seventh.Core",
+        "Seventh.Gameplay",
         "DOTween.Modules",
         "Unity.InputSystem",
         "Unity.TextMeshPro"

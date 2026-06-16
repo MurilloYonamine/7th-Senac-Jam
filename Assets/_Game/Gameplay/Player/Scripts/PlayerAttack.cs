@@ -31,6 +31,14 @@ namespace Seventh.Gameplay.Player
         [SerializeField] private float _combo3ScaleMultiplier = 1.5f;
         [SerializeField] private float _combo3OffsetMultiplier = 1.2f;
 
+        [Header("Damage Settings")]
+        [SerializeField] private int _combo1Damage = 15;
+        [SerializeField] private int _combo2Damage = 20;
+        [SerializeField] private int _combo3Damage = 35;
+        [SerializeField] private float _combo1Knockback = 0f;
+        [SerializeField] private float _combo2Knockback = 0f;
+        [SerializeField] private float _combo3Knockback = 0.6f;
+
         [Header("Combo 3 VFX Glow (HDR)")]
         [SerializeField] private string _vfxColorParameterName = "Color";
         [ColorUsage(true, true)][SerializeField] private Color _defaultVFXColor = Color.white;
@@ -137,7 +145,9 @@ namespace Seventh.Gameplay.Player
                 {
                     hitbox = vfxInstance.AddComponent<SlashHitbox>();
                 }
-                hitbox.Initialize(_comboStep);
+                int damage = _comboStep == 1 ? _combo1Damage : (_comboStep == 2 ? _combo2Damage : _combo3Damage);
+                float knockback = _comboStep == 1 ? _combo1Knockback : (_comboStep == 2 ? _combo2Knockback : _combo3Knockback);
+                hitbox.Initialize(_comboStep, damage, knockback, gameObject);
 
                 VisualEffect vfx = vfxInstance.GetComponentInChildren<VisualEffect>();
                 if (vfx != null)
