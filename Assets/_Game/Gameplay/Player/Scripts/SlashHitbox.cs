@@ -1,5 +1,5 @@
 using UnityEngine;
-using Seventh.Gameplay.Enemies;
+using Seventh.Gameplay.Health;
 
 namespace Seventh.Gameplay.Player
 {
@@ -7,19 +7,51 @@ namespace Seventh.Gameplay.Player
     public class SlashHitbox : MonoBehaviour
     {
         private int _comboStep = 1;
-        public void Initialize(int comboStep)
+        private int _damage = 0;
+        private float _knockback = 0f;
+        private GameObject _attacker;
+
+        public void Initialize(int comboStep, int damage, float knockback, GameObject attacker)
         {
             _comboStep = comboStep;
+            _damage = damage;
+            _knockback = knockback;
+            _attacker = attacker;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            Enemy enemy = other.GetComponent<Enemy>();
-            if (enemy != null)
+            // Evita que o atacante cause dano a si mesmo
+            if (_attacker != null && (other.gameObject == _attacker || other.transform.IsChildOf(_attacker.transform)))
             {
-                // The VFX transform.right points exactly in the direction of the slash attack
+                return;
+            }
+
+            IDamageable damageable = other.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
                 Vector2 pushDirection = transform.right;
-                enemy.TakeHit(_comboStep, pushDirection);
+
+                HitIntensity intensity;
+                switch (_comboStep)
+                {
+                    case 3: intensity = HitIntensity.Heavy; break;
+                    case 2: intensity = HitIntensity.Medium; break;
+                    default: intensity = HitIntensity.Light; break;
+                }
+
+                DamageInfo damageInfo = new DamageInfo(_damage, _knockback, pushDirection, _attacker, intensity);
+                damageable.TakeDamage(damageInfo);
+
+                // Se o atacante for o Player, notifica o acerto para cura por hit
+                if (_attacker != null)
+                {
+                    PlayerHealth playerHealth = _attacker.GetComponent<PlayerHealth>();
+                    if (playerHealth != null)
+                    {
+                        playerHealth.OnSuccessfulHit();
+                    }
+                }
             }
         }
     }

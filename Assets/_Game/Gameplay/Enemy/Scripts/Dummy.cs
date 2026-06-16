@@ -1,5 +1,6 @@
 using System.Collections;
 using DG.Tweening;
+using Seventh.Gameplay.Health;
 using UnityEngine;
 
 namespace Seventh.Gameplay.Enemies
@@ -30,8 +31,9 @@ namespace Seventh.Gameplay.Enemies
         [SerializeField] private float _flashDuration = 0.08f;
         [SerializeField] private float _hitstopDuration = 0.07f;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             _animator = GetComponent<Animator>();
             _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
@@ -53,9 +55,9 @@ namespace Seventh.Gameplay.Enemies
             return false;
         }
 
-        public override void TakeHit(int comboStep, Vector2 attackDirection)
+        protected override void HandleDamageTaken(DamageInfo damageInfo)
         {
-            base.TakeHit(comboStep, attackDirection);
+            base.HandleDamageTaken(damageInfo);
 
             if (_animator == null) return;
 
@@ -66,10 +68,10 @@ namespace Seventh.Gameplay.Enemies
             ResetAllBools();
 
             // Apply Knockback
-            if (comboStep == 3)
+            if (damageInfo.KnockbackForce > 0f)
             {
                 transform.DOKill(); // Stop any active movement tweens
-                transform.DOMove(transform.position + new Vector3(attackDirection.x, attackDirection.y, 0f) * _heavyKnockback, _knockbackDuration)
+                transform.DOMove(transform.position + new Vector3(damageInfo.HitDirection.x, damageInfo.HitDirection.y, 0f) * damageInfo.KnockbackForce, _knockbackDuration)
                     .SetEase(Ease.OutQuad);
             }
 
@@ -90,12 +92,12 @@ namespace Seventh.Gameplay.Enemies
             int targetHash = -1;
             bool hasParam = false;
 
-            if (comboStep == 3)
+            if (damageInfo.Intensity == HitIntensity.Heavy)
             {
                 targetHash = _isHeavyHash;
                 hasParam = _hasHeavyParam;
             }
-            else if (comboStep == 2)
+            else if (damageInfo.Intensity == HitIntensity.Medium)
             {
                 if (_hasMediumParam)
                 {
@@ -108,7 +110,7 @@ namespace Seventh.Gameplay.Enemies
                     hasParam = _hasLightParam;
                 }
             }
-            else // comboStep == 1
+            else // HitIntensity.Light
             {
                 targetHash = _isLightHash;
                 hasParam = _hasLightParam;
@@ -121,6 +123,8 @@ namespace Seventh.Gameplay.Enemies
                 _resetCoroutine = StartCoroutine(ResetBoolsAfterDelay(0.15f));
             }
         }
+
+
 
         private void ResetAllBools()
         {

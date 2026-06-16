@@ -3,6 +3,6 @@
   <Project Path="Seventh.Gameplay.csproj" />
   <Project Path="Seventh.Core.csproj" />
   <Project Path="DOTween.Modules.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Seventh.View.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
 </Solution>

@@ -1,12 +1,46 @@
 using UnityEngine;
+using Seventh.Gameplay.Health;
+using Seventh.Core.Events;
+using Seventh.Core.Services;
 
 namespace Seventh.Gameplay.Enemies
 {
+    [RequireComponent(typeof(HealthBase))]
     public class Enemy : MonoBehaviour
     {
-        public virtual void TakeHit(int comboStep, Vector2 attackDirection)
+        protected HealthBase HealthComponent { get; private set; }
+
+        protected virtual void Awake()
         {
-            Debug.Log($"{gameObject.name} was hit by combo strike {comboStep} from direction {attackDirection}");
+            HealthComponent = GetComponent<HealthBase>();
+        }
+
+        protected virtual void OnEnable()
+        {
+            if (HealthComponent != null)
+            {
+                HealthComponent.OnDamageTaken += HandleDamageTaken;
+                HealthComponent.OnDeath += HandleDeath;
+            }
+        }
+
+        protected virtual void OnDisable()
+        {
+            if (HealthComponent != null)
+            {
+                HealthComponent.OnDamageTaken -= HandleDamageTaken;
+                HealthComponent.OnDeath -= HandleDeath;
+            }
+        }
+
+        protected virtual void HandleDamageTaken(DamageInfo damageInfo)
+        {
+        }
+
+        protected virtual void HandleDeath()
+        {
+            Debug.Log($"{gameObject.name} has died!");
+            ServiceLocator.Get<IEventBus>()?.Publish(new EnemyDefeatedEvent(gameObject));
         }
     }
 }
