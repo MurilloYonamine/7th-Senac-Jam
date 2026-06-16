@@ -2,7 +2,8 @@ namespace Seventh.Core.Constants
 {
     public enum GameState
     {
-        MainMenu = 0,
+        None = 0,
+        MainMenu,
         Cutscene,
         Playing,
         Paused,

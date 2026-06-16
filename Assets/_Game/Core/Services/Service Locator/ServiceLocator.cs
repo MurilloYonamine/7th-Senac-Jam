@@ -6,7 +6,7 @@ namespace Seventh.Core.Services
 {
     public static class ServiceLocator
     {
-        private const string TAG = "<color=red>[ServiceLocator]</color>";
+        private const string TAG = "<color=yellow><b>[ServiceLocator]</b></color>";
 
         private static readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
@@ -15,11 +15,12 @@ namespace Seventh.Core.Services
             var type = typeof(T);
             if (_services.ContainsKey(type))
             {
-                Debug.LogWarning($" {TAG} O serviço do tipo {type} já está registrado.");
+                Debug.LogWarning($"{TAG} O serviço do tipo {type.Name} já está registrado.");
                 return;
             }
 
             _services.Add(type, service);
+            Debug.Log($"{TAG} Serviço do tipo {type.Name} registrado.");
         }
 
         public static void Unregister<T>()
@@ -39,7 +40,7 @@ namespace Seventh.Core.Services
                 return (T)service;
             }
 
-            Debug.LogError($" {TAG} Serviço do tipo {type} não foi encontrado.");
+            Debug.LogError($"{TAG} Serviço do tipo {type} não foi encontrado.");
             return default;
         }
 

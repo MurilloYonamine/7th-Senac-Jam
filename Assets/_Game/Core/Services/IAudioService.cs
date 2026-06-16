@@ -15,20 +15,20 @@ namespace Seventh.Core.Services
         const string AMBIENT_MIXER_PARAMETER = "AmbientVolume";
 
         // ============ TRACK ============
-        void PlayTrack(string trackName, AudioSettings settings);
-        void PlayTrack(AudioClip clip, AudioSettings settings);
+        void PlayTrack(string trackName, AudioSettings settings = default(AudioSettings));
+        void PlayTrack(AudioClip clip, AudioSettings settings = default(AudioSettings));
         void StopTrack(string trackName);
         void StopTrack(AudioClip clip);
 
         // ============ SFX ============
-        void PlaySFX(string sfxName, AudioSettings settings);
-        void PlaySFX(AudioClip clip, AudioSettings settings);
+        void PlaySFX(string sfxName, AudioSettings settings = default(AudioSettings));
+        void PlaySFX(AudioClip clip, AudioSettings settings = default(AudioSettings));
         void StopSFX(string sfxName);
         void StopSFX(AudioClip clip);
 
         // ============ AMBIENT ============
-        void PlayAmbient(string ambientName, AudioSettings settings);
-        void PlayAmbient(AudioClip clip, AudioSettings settings);
+        void PlayAmbient(string ambientName, AudioSettings settings = default(AudioSettings));
+        void PlayAmbient(AudioClip clip, AudioSettings settings = default(AudioSettings));
         void StopAmbient(string ambientName);
         void StopAmbient(AudioClip clip);
 
