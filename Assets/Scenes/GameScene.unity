@@ -2349,7 +2349,7 @@ GameObject:
   - component: {fileID: 606619431}
   - component: {fileID: 606619430}
   - component: {fileID: 606619429}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27426,7 +27426,7 @@ GameObject:
   - component: {fileID: 1463034073}
   - component: {fileID: 1463034075}
   - component: {fileID: 1463034074}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68135,7 +68135,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6196389166926645091, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 17.48
+      value: 32.29
       objectReference: {fileID: 0}
     - target: {fileID: 6196389166926645091, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
       propertyPath: m_LocalPosition.z
@@ -68168,6 +68168,14 @@ PrefabInstance:
     - target: {fileID: 6196389166926645091, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6593157350214705074, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
+      propertyPath: _dashSkinWidth
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6593157350214705074, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
+      propertyPath: _dashObstacleLayers.m_Bits
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 6945266217413205716, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
       propertyPath: _pauseMenu

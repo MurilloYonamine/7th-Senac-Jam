@@ -24,6 +24,8 @@ namespace Seventh.Gameplay.Player
         [SerializeField] private float _dashDistance = 5;
         [SerializeField] private float _dashDuration = 0.2f;
         [SerializeField] private float _dashCooldown = 1f;
+        [SerializeField] private LayerMask _dashObstacleLayers;
+        [SerializeField] private float _dashSkinWidth = 0.2f;
 
         [Header("Audio Settings")]
         [SerializeField] private AudioClip _dashSFX;
@@ -107,7 +109,19 @@ namespace Seventh.Gameplay.Player
 
         private void ExecuteDashMovement(Vector3 direction)
         {
-            Vector3 targetPosition = transform.position + (direction * _dashDistance);
+            float targetDistance = _dashDistance;
+
+            if (TryGetComponent<Collider2D>(out var col))
+            {
+                Vector2 boxSize = col.bounds.size;
+                RaycastHit2D hit = Physics2D.BoxCast(transform.position, boxSize, 0f, direction, _dashDistance, _dashObstacleLayers);
+                if (hit.collider != null)
+                {
+                    targetDistance = Mathf.Max(0f, hit.distance - _dashSkinWidth);
+                }
+            }
+
+            Vector3 targetPosition = transform.position + (direction * targetDistance);
             
             IsDashing = true;
             transform.DOMove(targetPosition, _dashDuration)
