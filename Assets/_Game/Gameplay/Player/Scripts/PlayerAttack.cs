@@ -4,6 +4,7 @@ using AudioSettings = Seventh.Core.Services.AudioSettings;
 using UnityEngine;
 using UnityEngine.VFX;
 using Unity.Cinemachine;
+using UnityEngine.InputSystem;
 
 namespace Seventh.Gameplay.Player
 {
@@ -24,41 +25,28 @@ namespace Seventh.Gameplay.Player
         [SerializeField] private bool _parentVFXToPlayer = true;
 
         [Header("Audio Settings")]
-        [SerializeField] private AudioClip _attackSFXNormal;
-        [Range(0f, 1f)][SerializeField] private float _attackSFXNormalVolume = 1f;
-        [SerializeField] private AudioClip _attackSFXHeavy;
-        [Range(0f, 1f)][SerializeField] private float _attackSFXHeavyVolume = 1f;
-
-        [Header("Combo Chain Settings")]
-        [SerializeField] private float _comboResetTime = 1.0f;
-        [SerializeField] private float _combo3ScaleMultiplier = 1.5f;
-        [SerializeField] private float _combo3OffsetMultiplier = 1.2f;
+        [SerializeField] private AudioClip _attackSFX1CLip;
+        [SerializeField] private AudioClip _attackSFX2CLip;
+        [Range(0f, 1f)]
+        [SerializeField] private float _attackSFXVolume = 1f;
 
         [Header("Damage Settings")]
-        [SerializeField] private int _combo1Damage = 15;
-        [SerializeField] private int _combo2Damage = 20;
-        [SerializeField] private int _combo3Damage = 35;
-        [SerializeField] private float _combo1Knockback = 0f;
-        [SerializeField] private float _combo2Knockback = 0f;
-        [SerializeField] private float _combo3Knockback = 0.6f;
+        [SerializeField] private int _attackDamage = 15;
+        [SerializeField] private float _attackKnockback = 0f;
 
-        [Header("Combo 3 VFX Glow (HDR)")]
+        [Header("VFX Glow (HDR)")]
         [SerializeField] private string _vfxColorParameterName = "Color";
-        [ColorUsage(true, true)][SerializeField] private Color _defaultVFXColor = Color.white;
-        [ColorUsage(true, true)][SerializeField] private Color _combo3VFXColor = new Color(3.0f, 3.0f, 3.0f, 1.0f);
+        [ColorUsage(true, true)]
+        [SerializeField] private Color _defaultVFXColor = Color.white;
 
         [Header("Screen Shake (Cinemachine)")]
         [SerializeField] private float _normalShakeForce = 0.4f;
-        [SerializeField] private float _combo3ShakeForce = 1.0f;
 
         [Header("Controller Rumble Settings")]
         [SerializeField] private float _normalRumbleIntensity = 0.5f;
-        [SerializeField] private float _combo3RumbleIntensity = 0.75f;
         [SerializeField] private float _rumbleDuration = 0.15f;
 
         private float _cooldownTimer = 0f;
-        private float _comboTimer = 0f;
-        private int _comboStep = 0;
 
         private CinemachineImpulseSource _impulseSource;
         private Coroutine _rumbleCoroutine;
@@ -81,17 +69,11 @@ namespace Seventh.Gameplay.Player
                 _cooldownTimer -= Time.deltaTime;
             }
 
-            if (_comboTimer > 0f)
-            {
-                _comboTimer -= Time.deltaTime;
-                if (_comboTimer <= 0f)
-                {
-                    _comboStep = 0;
-                }
-            }
-
             _inputService.GetAttackInput(out bool isAttacking, out _);
-            if (isAttacking && _cooldownTimer <= 0f && (_dash == null || !_dash.IsDashing))
+
+            if (isAttacking &&
+                _cooldownTimer <= 0f &&
+                (_dash == null || !_dash.IsDashing))
             {
                 Attack();
             }
@@ -101,64 +83,58 @@ namespace Seventh.Gameplay.Player
         {
             _cooldownTimer = _attackCooldown;
 
-            // Increment combo step (cycles 1, 2, 3)
-            _comboStep = (_comboStep % 3) + 1;
-            _comboTimer = _comboResetTime;
-
-            // Determine attack direction based on movement facing direction
-            Vector2 attackDir = _movement != null ? _movement.FacingDirection : Vector2.right;
-
-            // Trigger animator state
             if (_animator != null)
             {
                 _animator.PlayAttackAnimation();
-                _animator.SetComboIndex(_comboStep);
-                _animator.SetAlternateAttackParameter(_comboStep == 2);
             }
+        }
 
-            // Spawn VFX at offset in attack direction and rotate towards it
+        public void PerformAttackHit()
+        {
+            Vector2 attackDir = _movement != null
+                ? _movement.FacingDirection
+                : Vector2.right;
+
             if (_slashVFXPrefab != null)
             {
-                float finalOffset = _vfxSpawnOffset;
-                if (_comboStep == 3)
-                {
-                    finalOffset *= _combo3OffsetMultiplier;
-                }
+                Vector3 spawnPos =
+                    transform.position +
+                    new Vector3(attackDir.x, attackDir.y, 0f) * _vfxSpawnOffset;
 
-                Vector3 spawnPos = transform.position + new Vector3(attackDir.x, attackDir.y, 0f) * finalOffset;
-                float angle = Mathf.Atan2(attackDir.y, attackDir.x) * Mathf.Rad2Deg;
-                Quaternion spawnRot = Quaternion.Euler(0f, 0f, angle);
+                float angle =
+                    Mathf.Atan2(attackDir.y, attackDir.x) * Mathf.Rad2Deg;
 
-                GameObject vfxInstance = Instantiate(_slashVFXPrefab, spawnPos, spawnRot, _parentVFXToPlayer ? transform : null);
+                Quaternion spawnRot =
+                    Quaternion.Euler(0f, 0f, angle);
 
-                // Adjust scale and orientation based on combo step
-                Vector3 baseScale = vfxInstance.transform.localScale;
-                if (_comboStep == 3)
-                {
-                    vfxInstance.transform.localScale = baseScale * _combo3ScaleMultiplier;
-                }
-                else if (_comboStep == 2)
-                {
-                    vfxInstance.transform.localScale = new Vector3(baseScale.x, -baseScale.y, baseScale.z);
-                }
+                GameObject vfxInstance = Instantiate(
+                    _slashVFXPrefab,
+                    spawnPos,
+                    spawnRot,
+                    _parentVFXToPlayer ? transform : null);
 
-                // Initialize the hitbox component for collisions
                 SlashHitbox hitbox = vfxInstance.GetComponent<SlashHitbox>();
+
                 if (hitbox == null)
                 {
                     hitbox = vfxInstance.AddComponent<SlashHitbox>();
                 }
-                int damage = _comboStep == 1 ? _combo1Damage : (_comboStep == 2 ? _combo2Damage : _combo3Damage);
-                float knockback = _comboStep == 1 ? _combo1Knockback : (_comboStep == 2 ? _combo2Knockback : _combo3Knockback);
-                hitbox.Initialize(_comboStep, damage, knockback, gameObject);
 
-                VisualEffect vfx = vfxInstance.GetComponentInChildren<VisualEffect>();
+                hitbox.Initialize(
+                    _attackDamage,
+                    _attackKnockback,
+                    gameObject);
+
+                VisualEffect vfx =
+                    vfxInstance.GetComponentInChildren<VisualEffect>();
+
                 if (vfx != null)
                 {
                     if (!string.IsNullOrEmpty(_vfxColorParameterName))
                     {
-                        Color finalColor = _comboStep == 3 ? _combo3VFXColor : _defaultVFXColor;
-                        vfx.SetVector4(_vfxColorParameterName, finalColor);
+                        vfx.SetVector4(
+                            _vfxColorParameterName,
+                            _defaultVFXColor);
                     }
 
                     vfx.Play();
@@ -167,22 +143,16 @@ namespace Seventh.Gameplay.Player
                 Destroy(vfxInstance, _vfxDuration);
             }
 
-            // Play SFX
-            AudioClip sfxToPlay = (_comboStep == 3 && _attackSFXHeavy != null) ? _attackSFXHeavy : _attackSFXNormal;
-            float sfxVolume = (_comboStep == 3) ? _attackSFXHeavyVolume : _attackSFXNormalVolume;
-            if (sfxToPlay != null && _audioService != null)
-            {
-                _audioService.PlaySFX(sfxToPlay, new AudioSettings(volumeOffset: sfxVolume - 1f));
-            }
+        }
 
-            // Screen Shake (Cinemachine)
+        public void OnHitEnemy()
+        {
+            // --- Screen Shake (tela vibrando) ---
             if (_impulseSource != null)
             {
-                float shakeForce = _comboStep == 3 ? _combo3ShakeForce : _normalShakeForce;
-                _impulseSource.GenerateImpulse(shakeForce);
+                _impulseSource.GenerateImpulse(_normalShakeForce);
             }
 
-            // Gamepad Rumble
             TriggerGamepadRumble();
         }
 
@@ -193,40 +163,51 @@ namespace Seventh.Gameplay.Player
                 StopCoroutine(_rumbleCoroutine);
             }
 
-            float leftMotor = 0f;
-            float rightMotor = 0f;
-            float duration = _rumbleDuration;
-
-            if (_comboStep == 3)
-            {
-                // Vibrate both motors at maximum intensity
-                leftMotor = _combo3RumbleIntensity;
-                rightMotor = _combo3RumbleIntensity;
-                duration = _rumbleDuration * 1.5f; // Finisher is slightly longer
-            }
-            else if (_comboStep == 2)
-            {
-                // Vibrate left motor
-                leftMotor = _normalRumbleIntensity;
-            }
-            else // _comboStep == 1
-            {
-                // Vibrate right motor
-                rightMotor = _normalRumbleIntensity;
-            }
-
-            _rumbleCoroutine = StartCoroutine(RumbleRoutine(leftMotor, rightMotor, duration));
+            _rumbleCoroutine = StartCoroutine(
+                RumbleRoutine(
+                    _normalRumbleIntensity,
+                    _normalRumbleIntensity,
+                    _rumbleDuration));
         }
 
-        private IEnumerator RumbleRoutine(float leftSpeed, float rightSpeed, float duration)
+        public void PlayAttack1SFX()
         {
-            UnityEngine.InputSystem.Gamepad gamepad = UnityEngine.InputSystem.Gamepad.current;
+            if (_audioService != null && _attackSFX1CLip != null)
+            {
+                _audioService.PlaySFX(
+                    _attackSFX1CLip,
+                    new AudioSettings(
+                        volumeOffset: _attackSFXVolume - 1f));
+            }
+        }
+
+        public void PlayAttack2SFX()
+        {
+            if (_audioService != null && _attackSFX2CLip != null)
+            {
+                _audioService.PlaySFX(
+                    _attackSFX2CLip,
+                    new AudioSettings(
+                        volumeOffset: _attackSFXVolume - 1f));
+            }
+        }
+
+        private IEnumerator RumbleRoutine(
+            float leftSpeed,
+            float rightSpeed,
+            float duration)
+        {
+            Gamepad gamepad = Gamepad.current;
+
             if (gamepad != null)
             {
                 gamepad.SetMotorSpeeds(leftSpeed, rightSpeed);
+
                 yield return new WaitForSeconds(duration);
+
                 gamepad.SetMotorSpeeds(0f, 0f);
             }
+
             _rumbleCoroutine = null;
         }
 
@@ -248,11 +229,7 @@ namespace Seventh.Gameplay.Player
                 _rumbleCoroutine = null;
             }
 
-            UnityEngine.InputSystem.Gamepad gamepad = UnityEngine.InputSystem.Gamepad.current;
-            if (gamepad != null)
-            {
-                gamepad.SetMotorSpeeds(0f, 0f);
-            }
+            Gamepad.current?.SetMotorSpeeds(0f, 0f);
         }
     }
 }
