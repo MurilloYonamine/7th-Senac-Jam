@@ -33,7 +33,7 @@ AnimationClip:
     - time: 1
       value: {fileID: -3237336823341681840, guid: 323e6fe66e6dfd94e88e09eaa2bd72e2, type: 3}
     attribute: m_Sprite
-    path: 
+    path: Player Sprite
     classID: 212
     script: {fileID: 0}
     flags: 2
@@ -45,7 +45,7 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 0
+      path: 82835265
       attribute: 0
       script: {fileID: 0}
       typeID: 212
@@ -92,21 +92,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.4
-    functionName: PlayMoveSFX
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
   - time: 0.8
-    functionName: PlayMoveSFX
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
-  - time: 1
     functionName: PlayMoveSFX
     data: 
     objectReferenceParameter: {fileID: 0}
