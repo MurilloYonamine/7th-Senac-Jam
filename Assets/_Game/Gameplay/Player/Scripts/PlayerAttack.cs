@@ -23,6 +23,7 @@ namespace Seventh.Gameplay.Player
         [SerializeField] private float _vfxDuration = 0.5f;
         [SerializeField] private float _vfxSpawnOffset = 0.6f;
         [SerializeField] private bool _parentVFXToPlayer = true;
+        [SerializeField] private float _comboResetWindow = 0.8f;
 
         [Header("Audio Settings")]
         [SerializeField] private AudioClip _attackSFX1CLip;
@@ -47,7 +48,8 @@ namespace Seventh.Gameplay.Player
         [SerializeField] private float _rumbleDuration = 0.15f;
 
         private float _cooldownTimer = 0f;
-
+        private int _attackCount = 0;
+        private float _lastAttackTime = 0f;
         private CinemachineImpulseSource _impulseSource;
         private Coroutine _rumbleCoroutine;
 
@@ -91,6 +93,12 @@ namespace Seventh.Gameplay.Player
 
         public void PerformAttackHit()
         {
+            if (Time.time - _lastAttackTime > _comboResetWindow)
+            {
+                _attackCount = 0;
+            }
+            _lastAttackTime = Time.time;
+
             Vector2 attackDir = _movement != null
                 ? _movement.FacingDirection
                 : Vector2.right;
@@ -112,6 +120,16 @@ namespace Seventh.Gameplay.Player
                     spawnPos,
                     spawnRot,
                     _parentVFXToPlayer ? transform : null);
+
+                // Mirror VFX on every odd hit (2nd, 4th, etc.) in the combo chain
+                if (_attackCount % 2 != 0)
+                {
+                    Vector3 scale = vfxInstance.transform.localScale;
+                    scale.y *= -1f;
+                    vfxInstance.transform.localScale = scale;
+                }
+
+                _attackCount++;
 
                 SlashHitbox hitbox = vfxInstance.GetComponent<SlashHitbox>();
 
@@ -147,7 +165,6 @@ namespace Seventh.Gameplay.Player
 
         public void OnHitEnemy()
         {
-            // --- Screen Shake (tela vibrando) ---
             if (_impulseSource != null)
             {
                 _impulseSource.GenerateImpulse(_normalShakeForce);
