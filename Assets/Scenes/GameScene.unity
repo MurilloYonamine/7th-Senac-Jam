@@ -1434,6 +1434,11 @@ Transform:
   - {fileID: 396817049}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &840455056 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 5679742139103901472, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
+  m_PrefabInstance: {fileID: 1061260685846683637}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &956986613
 GameObject:
   m_ObjectHideFlags: 0
@@ -3566,50 +3571,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 793585545}
     m_Modifications:
-    - target: {fileID: 449507460848685713, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: _walkSFXVolume
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 449507460848685713, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: _walkSFX.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 449507460848685713, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: '_walkSFX.Array.data[0]'
-      value: 
-      objectReference: {fileID: 8300000, guid: 7da853e020a9bbf47bec13e116cd3949, type: 3}
-    - target: {fileID: 449507460848685713, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: '_walkSFX.Array.data[1]'
-      value: 
-      objectReference: {fileID: 8300000, guid: cf45dbcb215da4c49914d2919fbc7012, type: 3}
-    - target: {fileID: 449507460848685713, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: '_walkSFX.Array.data[2]'
-      value: 
-      objectReference: {fileID: 8300000, guid: 10fa99bec4acfe64cb9c3f92018a6117, type: 3}
     - target: {fileID: 485323516014241235, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
-    - target: {fileID: 770499747581351104, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2365309700303547973, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3210196276140680414, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3639544835062538551, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3856797170224620455, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 5874714706161344626, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -3658,65 +3623,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6457934707603637563, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 6593157350214705074, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: _dashSFX
+      propertyPath: _spriteRenderer
       value: 
-      objectReference: {fileID: 8300000, guid: b7a5b9d88f827304d8ae9d9cf0e84494, type: 3}
-    - target: {fileID: 6593157350214705074, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: _dashSFXVolume
-      value: 0.5
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 840455056}
     - target: {fileID: 6945266217413205716, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
       propertyPath: _pauseMenu
       value: 
       objectReference: {fileID: 1132997564}
-    - target: {fileID: 7058501382640382040, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: _hurtSFX
-      value: 
-      objectReference: {fileID: 8300000, guid: 5262910c23c6e7f4da20266d5b50c25a, type: 3}
-    - target: {fileID: 7058501382640382040, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: _maxHealth
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 7802493923698381922, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: _attackSFX1CLip
-      value: 
-      objectReference: {fileID: 8300000, guid: 1af922099ed2fcd4bab0091660ea99e5, type: 3}
-    - target: {fileID: 7802493923698381922, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: _attackSFX2CLip
-      value: 
-      objectReference: {fileID: 8300000, guid: 80436a423011d924c810c596a213fe27, type: 3}
-    - target: {fileID: 7802493923698381922, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: _attackSFXVolume
-      value: 0.25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7802493923698381922, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: _attackSFXClips.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7802493923698381922, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: '_attackSFXClips.Array.data[0]'
-      value: 
-      objectReference: {fileID: 8300000, guid: 1af922099ed2fcd4bab0091660ea99e5, type: 3}
-    - target: {fileID: 7802493923698381922, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: '_attackSFXClips.Array.data[1]'
-      value: 
-      objectReference: {fileID: 8300000, guid: e287c02a18a430046b1a36886df9adf3, type: 3}
-    - target: {fileID: 7802493923698381922, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: '_attackSFXClips.Array.data[2]'
-      value: 
-      objectReference: {fileID: 8300000, guid: 80436a423011d924c810c596a213fe27, type: 3}
     - target: {fileID: 8762896975328446789, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 8762896975328446789, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
-      propertyPath: m_Layer
-      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

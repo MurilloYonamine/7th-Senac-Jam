@@ -10,9 +10,11 @@ namespace Seventh.Gameplay.Player
 {
     public class PlayerDash : MonoBehaviour
     {
+        [Header("References")]
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+
         private IInputService _inputService;
         private IAudioService _audioService;
-        private SpriteRenderer _spriteRenderer;
         private CinemachineImpulseSource _impulseSource;
         private Coroutine _flashCoroutine;
         private Material _originalMaterial;
@@ -40,7 +42,12 @@ namespace Seventh.Gameplay.Player
         {
             _inputService = ServiceLocator.Get<IInputService>();
             _audioService = ServiceLocator.Get<IAudioService>();
-            _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+            if (_spriteRenderer == null)
+            {
+                _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+            
             _impulseSource = GetComponent<CinemachineImpulseSource>();
             if (_spriteRenderer != null)
             {
@@ -204,7 +211,9 @@ namespace Seventh.Gameplay.Player
                     transform.rotation,
                     _spriteRenderer.transform.localScale,
                     _ghostColor,
-                    _ghostFadeDuration
+                    _ghostFadeDuration,
+                    _spriteRenderer.sortingOrder - 1,
+                    _spriteRenderer.sortingLayerName
                 );
 
                 yield return new WaitForSeconds(_ghostDelay);

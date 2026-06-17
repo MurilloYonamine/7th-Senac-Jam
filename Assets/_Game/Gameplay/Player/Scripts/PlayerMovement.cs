@@ -27,6 +27,19 @@ namespace Seventh.Gameplay.Player
         [SerializeField] private VisualEffect _moveDustVFX;
         [SerializeField] private float _dustSpawnRate = 15f;
 
+        [Header("DOTween Walk Visuals")]
+        [SerializeField] private Transform _visualModel;
+        [SerializeField] private bool _useBobbing = true;
+        [SerializeField] private float _bobHeight = 0.15f;
+        [SerializeField] private float _bobDuration = 0.3f;
+        [SerializeField] private bool _useSquashAndStretch = true;
+        [SerializeField] private Vector2 _squashScale = new Vector2(1.1f, 0.85f);
+
+        private Vector3 _initialLocalPosition;
+        private Vector3 _initialLocalScale;
+        private Sequence _walkSequence;
+        private bool _animatingWalk;
+
         private void Awake()
         {
             _inputService = ServiceLocator.Get<IInputService>();
@@ -34,9 +47,24 @@ namespace Seventh.Gameplay.Player
             _animator = GetComponent<PlayerAnimator>();
         }
 
+        private void Start()
+        {
+            if (_visualModel != null)
+            {
+                _initialLocalPosition = _visualModel.localPosition;
+                _initialLocalScale = _visualModel.localScale;
+            }
+        }
+
         private void Update()
         {
             Move();
+            UpdateWalkAnimationState();
+        }
+
+        private void OnDestroy()
+        {
+            _walkSequence?.Kill();
         }
 
         private void Move()
@@ -53,6 +81,81 @@ namespace Seventh.Gameplay.Player
 
             _animator.UpdateMovementAnimation(_movementInput);
             UpdateMoveDustVFX();
+        }
+
+        private void UpdateWalkAnimationState()
+        {
+            if (_visualModel == null) return;
+
+            bool isCurrentlyMoving = _movementInput.sqrMagnitude > 0.01f;
+
+            if (isCurrentlyMoving && !_animatingWalk)
+            {
+                StartWalkAnimation();
+            }
+            else if (!isCurrentlyMoving && _animatingWalk)
+            {
+                StopWalkAnimation();
+            }
+        }
+
+        private void StartWalkAnimation()
+        {
+            _animatingWalk = true;
+            PlayWalkStep();
+        }
+
+        private void PlayWalkStep()
+        {
+            if (!_animatingWalk || _visualModel == null) return;
+
+            _walkSequence = DOTween.Sequence();
+
+            if (_useBobbing)
+            {
+                _walkSequence.Append(_visualModel.DOLocalMoveY(_initialLocalPosition.y + _bobHeight, _bobDuration / 2f).SetEase(Ease.OutQuad));
+                _walkSequence.Append(_visualModel.DOLocalMoveY(_initialLocalPosition.y, _bobDuration / 2f).SetEase(Ease.InQuad));
+            }
+
+            if (_useSquashAndStretch)
+            {
+                Sequence scaleSeq = DOTween.Sequence();
+                scaleSeq.Append(_visualModel.DOScale(new Vector3(_initialLocalScale.x * _squashScale.x, _initialLocalScale.y * _squashScale.y, _initialLocalScale.z), _bobDuration * 0.3f).SetEase(Ease.OutQuad));
+                scaleSeq.Append(_visualModel.DOScale(_initialLocalScale, _bobDuration * 0.7f).SetEase(Ease.InOutQuad));
+
+                if (_useBobbing)
+                {
+                    _walkSequence.Join(scaleSeq);
+                }
+                else
+                {
+                    _walkSequence.Append(scaleSeq);
+                }
+            }
+
+            // Fallback se nenhum estiver ativado
+            if (!_useBobbing && !_useSquashAndStretch)
+            {
+                _walkSequence.AppendInterval(_bobDuration);
+            }
+
+            _walkSequence.OnComplete(() =>
+            {
+                PlayWalkStep();
+            });
+        }
+
+        private void StopWalkAnimation()
+        {
+            _animatingWalk = false;
+            _walkSequence?.Kill();
+
+            if (_visualModel != null)
+            {
+                _visualModel.DOKill();
+                _visualModel.localPosition = _initialLocalPosition;
+                _visualModel.localScale = _initialLocalScale;
+            }
         }
 
         private void UpdateMoveDustVFX()
