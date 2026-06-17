@@ -96,5 +96,18 @@ namespace Seventh.Gameplay.Enemy
             _rb.linearVelocity = Vector2.zero;
             _cooldownTimer = _hopCooldown;
         }
+
+        public void Interrupt()
+        {
+            _isHopping = false;
+            _rb.linearVelocity = Vector2.zero;
+            _cooldownTimer = 0f;
+            if (_visualModel != null)
+            {
+                _visualModel.DOKill();
+                _visualModel.localScale = Vector3.one;
+                _visualModel.localPosition = Vector3.zero;
+            }
+        }
     }
 }

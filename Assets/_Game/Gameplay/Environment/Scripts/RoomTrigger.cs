@@ -25,6 +25,7 @@ namespace Seventh.Gameplay.Environment
         public string RoomId => _roomId;
         public Vector2 RoomPosition => _roomPosition;
         public CinemachineCamera RoomCamera => _roomCamera;
+        public BoxCollider2D RoomCollider => _collider;
 
         private void Awake()
         {

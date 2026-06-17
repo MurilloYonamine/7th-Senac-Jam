@@ -1,10 +1,13 @@
 using UnityEngine;
 using Seventh.Gameplay.Player;
 using Seventh.Core.Services;
+using Seventh.Gameplay.Environment;
+using Seventh.Gameplay.Enemies;
 
 namespace Seventh.Gameplay.Enemy
 {
     [RequireComponent(typeof(EnemyHopMovement))]
+    [RequireComponent(typeof(Seventh.Gameplay.Enemies.Enemy))]
     public class CowardEnemyController : MonoBehaviour
     {
         [Header("Movement")]
@@ -20,6 +23,7 @@ namespace Seventh.Gameplay.Enemy
         private EnemyStateMachine _stateMachine;
         private Transform _playerTransform;
         private EnemyHopMovement _hopMovement;
+        private RoomTrigger _myRoom;
 
         public float MoveSpeed => _moveSpeed;
         public float SafeDistance => _safeDistance;
@@ -28,6 +32,7 @@ namespace Seventh.Gameplay.Enemy
         public Transform WeaponPivot => _weaponPivot;
         public Transform PlayerTransform => _playerTransform;
         public EnemyHopMovement HopMovement => _hopMovement;
+        public RoomTrigger MyRoom => _myRoom;
 
         private void Awake()
         {
@@ -41,6 +46,16 @@ namespace Seventh.Gameplay.Enemy
             if (player != null)
             {
                 _playerTransform = player.transform;
+            }
+
+            // Detect which room this enemy spawned in
+            foreach (var room in FindObjectsByType<RoomTrigger>(FindObjectsInactive.Exclude))
+            {
+                if (room.RoomCollider != null && room.RoomCollider.OverlapPoint(transform.position))
+                {
+                    _myRoom = room;
+                    break;
+                }
             }
 
             _stateMachine.ChangeState(new CowardFleeState(this, _stateMachine));

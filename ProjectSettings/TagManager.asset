@@ -42,17 +42,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Effects
-    uniqueID: 911028587
-    locked: 0
   - name: Scenario
     uniqueID: 1496413255
     locked: 0
   - name: Props
     uniqueID: 2928611973
     locked: 0
-  - name: Player
+  - name: Entities
     uniqueID: 1015662297
+    locked: 0
+  - name: Effects
+    uniqueID: 911028587
     locked: 0
   - name: HUD
     uniqueID: 1341797903

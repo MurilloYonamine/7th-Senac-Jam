@@ -22,15 +22,6 @@ namespace Seventh.Gameplay.Enemies
         private bool _hasHeavyParam;
 
         private Coroutine _resetCoroutine;
-        private Coroutine _flashCoroutine;
-        private Coroutine _hitstopCoroutine;
-
-        [Header("Knockback Settings")]
-        [SerializeField] private float _knockbackDuration = 0.12f;
-
-        [Header("Juice Settings")]
-        [SerializeField] private float _flashDuration = 0.08f;
-        [SerializeField] private float _hitstopDuration = 0.07f;
 
         [Header("Audio Settings")]
         [SerializeField] private AudioClip _hitLightSFX;
@@ -41,8 +32,6 @@ namespace Seventh.Gameplay.Enemies
         [Range(0f, 1f)][SerializeField] private float _hitHeavySFXVolume = 1f;
 
         private IAudioService _audioService;
-        private Material _originalMaterial;
-        private Material _currentFlashMaterial;
 
         protected override void Awake()
         {
@@ -57,10 +46,6 @@ namespace Seventh.Gameplay.Enemies
             _hasLightParam = HasParameter("IsLight");
             _hasMediumParam = HasParameter("IsMedium");
             _hasHeavyParam = HasParameter("IsHeavy");
-            if (_spriteRenderer != null)
-            {
-                _originalMaterial = _spriteRenderer.material;
-            }
         }
 
         private bool HasParameter(string paramName)
@@ -75,6 +60,7 @@ namespace Seventh.Gameplay.Enemies
 
         protected override void HandleDamageTaken(DamageInfo damageInfo)
         {
+            // Call base class to handle common knockback, hit flash, and hitstop!
             base.HandleDamageTaken(damageInfo);
 
             if (_audioService != null)
@@ -112,37 +98,6 @@ namespace Seventh.Gameplay.Enemies
             }
             ResetAllBools();
 
-            // Apply Knockback
-            if (damageInfo.KnockbackForce > 0f)
-            {
-                transform.DOKill(); // Stop any active movement tweens
-                transform.DOMove(transform.position + new Vector3(damageInfo.HitDirection.x, damageInfo.HitDirection.y, 0f) * damageInfo.KnockbackForce, _knockbackDuration)
-                    .SetEase(Ease.OutQuad);
-            }
-
-            // Apply Flash Effect
-            if (_flashCoroutine != null)
-            {
-                StopCoroutine(_flashCoroutine);
-                if (_spriteRenderer != null && _originalMaterial != null)
-                {
-                    _spriteRenderer.material = _originalMaterial;
-                }
-                if (_currentFlashMaterial != null)
-                {
-                    Destroy(_currentFlashMaterial);
-                    _currentFlashMaterial = null;
-                }
-            }
-            _flashCoroutine = StartCoroutine(FlashRoutine(_flashDuration));
-
-            // Apply Hitstop (VFX freeze)
-            if (_hitstopCoroutine != null)
-            {
-                StopCoroutine(_hitstopCoroutine);
-            }
-            _hitstopCoroutine = StartCoroutine(HitstopRoutine(_hitstopDuration));
-
             int targetHash = -1;
             bool hasParam = false;
 
@@ -178,8 +133,6 @@ namespace Seventh.Gameplay.Enemies
             }
         }
 
-
-
         private void ResetAllBools()
         {
             if (_hasLightParam) _animator.SetBool(_isLightHash, false);
@@ -192,48 +145,6 @@ namespace Seventh.Gameplay.Enemies
             yield return new WaitForSeconds(delay);
             ResetAllBools();
             _resetCoroutine = null;
-        }
-
-        private IEnumerator FlashRoutine(float duration)
-        {
-            if (_spriteRenderer == null) yield break;
-
-            _currentFlashMaterial = new Material(Shader.Find("GUI/Text Shader"));
-            _currentFlashMaterial.color = Color.white;
-
-            _spriteRenderer.material = _currentFlashMaterial;
-            yield return new WaitForSeconds(duration);
-
-            if (_spriteRenderer != null && _originalMaterial != null)
-            {
-                _spriteRenderer.material = _originalMaterial;
-            }
-
-            if (_currentFlashMaterial != null)
-            {
-                Destroy(_currentFlashMaterial);
-                _currentFlashMaterial = null;
-            }
-            _flashCoroutine = null;
-        }
-
-        private void OnDestroy()
-        {
-            if (_currentFlashMaterial != null)
-            {
-                Destroy(_currentFlashMaterial);
-            }
-        }
-
-        private IEnumerator HitstopRoutine(float duration)
-        {
-            if (_animator == null) yield break;
-
-            float originalSpeed = _animator.speed;
-            _animator.speed = 0f;
-            yield return new WaitForSeconds(duration);
-            _animator.speed = originalSpeed;
-            _hitstopCoroutine = null;
         }
     }
 }
