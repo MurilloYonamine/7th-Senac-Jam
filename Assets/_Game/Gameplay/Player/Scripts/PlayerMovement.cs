@@ -35,6 +35,8 @@ namespace Seventh.Gameplay.Player
         [SerializeField] private bool _useSquashAndStretch = true;
         [SerializeField] private Vector2 _squashScale = new Vector2(1.1f, 0.85f);
 
+        public Transform VisualModel => _visualModel;
+
         private Vector3 _initialLocalPosition;
         private Vector3 _initialLocalScale;
         private Sequence _walkSequence;

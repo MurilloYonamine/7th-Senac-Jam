@@ -115,8 +115,37 @@ namespace Seventh.Gameplay.Player
                 .OnComplete(() => 
                 {
                     IsDashing = false;
-                    _spriteRenderer.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutElastic);
+                    if (_spriteRenderer != null)
+                    {
+                        _spriteRenderer.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutElastic);
+                    }
                 });
+        }
+
+        public void CancelDash()
+        {
+            if (!IsDashing) return;
+            IsDashing = false;
+            transform.DOKill();
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.transform.DOKill();
+                _spriteRenderer.transform.localScale = Vector3.one;
+                if (_originalMaterial != null)
+                {
+                    _spriteRenderer.material = _originalMaterial;
+                }
+            }
+            if (_flashCoroutine != null)
+            {
+                StopCoroutine(_flashCoroutine);
+                _flashCoroutine = null;
+            }
+            if (_currentFlashMaterial != null)
+            {
+                Destroy(_currentFlashMaterial);
+                _currentFlashMaterial = null;
+            }
         }
 
         private void ApplyDashEffects(Vector3 direction)
