@@ -1,0 +1,40 @@
+fileFormatVersion: 2
+guid: cb7dbfd472e180b4ba6024411cc32903
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _moveAction: {instanceID: 0}
+  - _attackAction: {instanceID: 0}
+  - _dashAction: {instanceID: 0}
+  - _menuAction: {instanceID: 0}
+  - _keyboardMouseLayout: {instanceID: 0}
+  - _gamepadLayout: {instanceID: 0}
+  - _wasdSingleImage: {instanceID: 0}
+  - _wasdSpriteDefault: {fileID: 365982550544767603, guid: 0edd540f6bc018d4cb5e99894d48add9, type: 3}
+  - _wasdSpriteUp: {instanceID: 0}
+  - _wasdSpriteDown: {instanceID: 0}
+  - _wasdSpriteLeft: {instanceID: 0}
+  - _wasdSpriteRight: {instanceID: 0}
+  - _wKeyImage: {instanceID: 0}
+  - _aKeyImage: {instanceID: 0}
+  - _sKeyImage: {instanceID: 0}
+  - _dKeyImage: {instanceID: 0}
+  - _mouseAttackImage: {instanceID: 0}
+  - _keyboardDashImage: {instanceID: 0}
+  - _keyboardMenuImage: {instanceID: 0}
+  - _gamepadMoveImage: {instanceID: 0}
+  - _analogSpriteDefault: {instanceID: 0}
+  - _analogSpriteUp: {instanceID: 0}
+  - _analogSpriteDown: {instanceID: 0}
+  - _analogSpriteLeft: {instanceID: 0}
+  - _analogSpriteRight: {instanceID: 0}
+  - _analogStickHead: {instanceID: 0}
+  - _gamepadAttackImage: {instanceID: 0}
+  - _gamepadDashImage: {instanceID: 0}
+  - _gamepadMenuImage: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
