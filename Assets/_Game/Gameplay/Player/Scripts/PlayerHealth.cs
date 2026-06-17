@@ -60,11 +60,6 @@ namespace Seventh.Gameplay.Player
                 StopCoroutine(_poisonCoroutine);
                 _poisonCoroutine = null;
             }
-
-            if (_isLowHealthWarningPlaying && _audioService != null && _lowHealthWarningSFX != null)
-            {
-                _audioService.StopSFX(_lowHealthWarningSFX);
-            }
         }
 
         protected override void HandleHealthChanged(int current, int max)
