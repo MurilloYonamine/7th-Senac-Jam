@@ -15,6 +15,7 @@ namespace Seventh.View.Menu
         private MainMenuState _mainState;
         private Tween _fadeTween;
         private IAudioService _audioService;
+        private bool _allowHoverSound;
 
         private readonly List<VisualElement> _spawnedTags = new List<VisualElement>();
 
@@ -33,6 +34,8 @@ namespace Seventh.View.Menu
         [Range(0f, 1f)] [SerializeField] private float _jumpSFXVolume = 1f;
         [SerializeField] private AudioClip _transitionSFX;
         [Range(0f, 1f)] [SerializeField] private float _transitionSFXVolume = 1f;
+        [SerializeField] private AudioClip _hoverSFX;
+        [Range(0f, 1f)] [SerializeField] private float _hoverSFXVolume = 1f;
 
         private void Awake()
         {
@@ -57,23 +60,23 @@ namespace Seventh.View.Menu
             var root = _uiDocument.rootVisualElement;
             if (root == null) return;
 
-            // Busca o botão Voltar pelo ID do UXML
             _btnBack = root.Q<Button>("BtnBack");
             if (_btnBack != null)
             {
                 _btnBack.clicked += OnBackClicked;
             }
 
-            // Toca som de transição de estado ao abrir
+            _allowHoverSound = false;
+            root.Query<Button>(className: "menu-button").ForEach(RegisterButtonEvents);
+
             PlayTransitionSound();
 
-            // Inicia animação de Fade In de toda a tela
             FadeIn(() =>
             {
-                _btnBack?.Focus(); // Dá foco imediato para suporte a controle
+                _btnBack?.Focus();
+                _allowHoverSound = true;
             });
 
-            // Cria e anima a queda dos cartões de nomes
             SpawnAndAnimateCredits(root);
         }
 
@@ -81,16 +84,23 @@ namespace Seventh.View.Menu
         {
             _fadeTween?.Kill();
 
-            // Limpa as animações dos cartões para evitar leaks
             foreach (var tag in _spawnedTags)
             {
                 DOTween.Kill(tag);
             }
 
-            // Desinscreve o botão voltar
             if (_btnBack != null)
             {
                 _btnBack.clicked -= OnBackClicked;
+            }
+
+            if (_uiDocument != null)
+            {
+                var root = _uiDocument.rootVisualElement;
+                if (root != null)
+                {
+                    root.Query<Button>(className: "menu-button").ForEach(UnregisterButtonEvents);
+                }
             }
         }
 
@@ -103,7 +113,6 @@ namespace Seventh.View.Menu
                 _mainState.ReturnFromState(this);
             }
 
-            // Inicia fade out e desativa o GameObject no final da animação
             FadeOut(() => gameObject.SetActive(false));
         }
 
@@ -133,7 +142,6 @@ namespace Seventh.View.Menu
 
         private void SpawnAndAnimateCredits(VisualElement root)
         {
-            // Limpa qualquer cartão órfão anterior
             foreach (var tag in _spawnedTags)
             {
                 tag.parent?.Remove(tag);
@@ -149,9 +157,8 @@ namespace Seventh.View.Menu
                 label.text = _creditsNames[i];
                 label.AddToClassList("credit-text-only");
                 label.AddToClassList("grape-soda-font");
-                label.style.whiteSpace = WhiteSpace.Normal; // Habilita quebra de linha
+                label.style.whiteSpace = WhiteSpace.Normal; 
 
-                // Define a posição horizontal (distribuídos entre 15% e 85% da tela)
                 float percentLeft = 15f + i * (70f / (_creditsNames.Length - 1));
                 label.style.left = Length.Percent(percentLeft);
                 label.style.top = Length.Percent(startY);
@@ -159,32 +166,29 @@ namespace Seventh.View.Menu
                 root.Add(label);
                 _spawnedTags.Add(label);
 
-                // Animação de queda com física de Bounce (quicando)
                 var currentLabel = label;
-                float delay = i * 0.15f; // Efeito cascata
+                float delay = i * 0.15f;
 
                 DOTween.To(() => currentLabel.style.top.value.value, y => currentLabel.style.top = Length.Percent(y), targetY, 1.1f)
                     .SetEase(Ease.OutBounce)
                     .SetDelay(delay);
-
-                // Interatividade ao clicar: dá um "pulo" e quica de novo
                 bool isJumping = false;
                 currentLabel.RegisterCallback<PointerDownEvent>(evt =>
                 {
                     if (isJumping) return;
                     isJumping = true;
 
-                    // Toca o áudio do pulo do card
                     PlayJumpSound();
 
-                    // Interrompe o movimento atual daquela caixa específica
                     DOTween.Kill(currentLabel);
 
-                    float jumpHeight = 15f; // Altura do pulo (15% da tela)
+                    float jumpHeight = 15f;
 
                     DOTween.Sequence()
-                        .Append(DOTween.To(() => currentLabel.style.top.value.value, y => currentLabel.style.top = Length.Percent(y), targetY - jumpHeight, 0.3f).SetEase(Ease.OutQuad))
-                        .Append(DOTween.To(() => currentLabel.style.top.value.value, y => currentLabel.style.top = Length.Percent(y), targetY, 0.5f).SetEase(Ease.OutBounce))
+                        .Append(DOTween.To(() => currentLabel.style.top.value.value, y => currentLabel.style.top = Length.Percent(y), targetY - jumpHeight, 0.3f)
+                        .SetEase(Ease.OutQuad))
+                        .Append(DOTween.To(() => currentLabel.style.top.value.value, y => currentLabel.style.top = Length.Percent(y), targetY, 0.5f)
+                        .SetEase(Ease.OutBounce))
                         .OnComplete(() => isJumping = false);
                 });
             }
@@ -222,6 +226,54 @@ namespace Seventh.View.Menu
             else
             {
                 onComplete?.Invoke();
+            }
+        }
+
+        private void PlayHoverSound()
+        {
+            if (_audioService != null && _hoverSFX != null)
+            {
+                _audioService.PlaySFX(_hoverSFX, new AudioSettings(volumeOffset: _hoverSFXVolume - 1f));
+            }
+        }
+
+        private void RegisterButtonEvents(Button button)
+        {
+            if (button == null) return;
+            button.RegisterCallback<PointerEnterEvent>(OnPointerEnter);
+            button.RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
+            button.RegisterCallback<FocusInEvent>(OnFocusIn);
+        }
+
+        private void UnregisterButtonEvents(Button button)
+        {
+            if (button == null) return;
+            button.UnregisterCallback<PointerEnterEvent>(OnPointerEnter);
+            button.UnregisterCallback<PointerLeaveEvent>(OnPointerLeave);
+            button.UnregisterCallback<FocusInEvent>(OnFocusIn);
+        }
+
+        private void OnPointerEnter(PointerEnterEvent evt)
+        {
+            if (evt.currentTarget is Button button)
+            {
+                button.Focus();
+            }
+        }
+
+        private void OnPointerLeave(PointerLeaveEvent evt)
+        {
+            if (evt.currentTarget is Button button)
+            {
+                button.Blur();
+            }
+        }
+
+        private void OnFocusIn(FocusInEvent evt)
+        {
+            if (_allowHoverSound)
+            {
+                PlayHoverSound();
             }
         }
     }

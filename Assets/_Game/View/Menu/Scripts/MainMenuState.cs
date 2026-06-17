@@ -26,10 +26,13 @@ namespace Seventh.View.Menu
         [Range(0f, 1f)] [SerializeField] private float _clickSFXVolume = 1f;
         [SerializeField] private AudioClip _transitionSFX;
         [Range(0f, 1f)] [SerializeField] private float _transitionSFXVolume = 1f;
+        [SerializeField] private AudioClip _hoverSFX;
+        [Range(0f, 1f)] [SerializeField] private float _hoverSFXVolume = 1f;
 
         private bool _restoringFocus;
         private string _buttonToFocusName;
         private Tween _fadeTween;
+        private bool _allowHoverSound;
 
         private void Awake()
         {
@@ -40,7 +43,6 @@ namespace Seventh.View.Menu
         {
             _audioService = ServiceLocator.Get<IAudioService>();
             
-            // Caso comece ativo na cena, garante que toca o som inicial
             if (gameObject.activeInHierarchy)
             {
                 PlayTransitionSound();
@@ -54,25 +56,23 @@ namespace Seventh.View.Menu
             var root = _uiDocument.rootVisualElement;
             if (root == null) return;
 
-            // Busca os botões principais pelo ID do UXML
             _btnPlay = root.Q<Button>("BtnPlay");
             _btnSettings = root.Q<Button>("BtnSettings");
             _btnCredits = root.Q<Button>("BtnCredits");
             _btnQuit = root.Q<Button>("BtnQuit");
 
-            // Inscreve as funções nos cliques dos botões
             if (_btnPlay != null) _btnPlay.clicked += OnPlayClicked;
             if (_btnSettings != null) _btnSettings.clicked += OnSettingsClicked;
             if (_btnCredits != null) _btnCredits.clicked += OnCreditsClicked;
             if (_btnQuit != null) _btnQuit.clicked += OnQuitClicked;
 
-            // Toca som de transição de estado ao abrir
+            _allowHoverSound = false;
+            root.Query<Button>(className: "menu-button").ForEach(RegisterButtonEvents);
+
             PlayTransitionSound();
 
-            // Inicia a animação de Fade In
             FadeIn(() =>
             {
-                // Restaura o foco apropriado após o fade-in para suporte a teclado/gamepad
                 if (_restoringFocus)
                 {
                     var targetBtn = root.Q<Button>(_buttonToFocusName);
@@ -90,6 +90,7 @@ namespace Seventh.View.Menu
                 {
                     _btnPlay?.Focus();
                 }
+                _allowHoverSound = true;
             });
         }
 
@@ -101,6 +102,15 @@ namespace Seventh.View.Menu
             if (_btnSettings != null) _btnSettings.clicked -= OnSettingsClicked;
             if (_btnCredits != null) _btnCredits.clicked -= OnCreditsClicked;
             if (_btnQuit != null) _btnQuit.clicked -= OnQuitClicked;
+
+            if (_uiDocument != null)
+            {
+                var root = _uiDocument.rootVisualElement;
+                if (root != null)
+                {
+                    root.Query<Button>(className: "menu-button").ForEach(UnregisterButtonEvents);
+                }
+            }
         }
 
         private void OnPlayClicked()
@@ -153,6 +163,54 @@ namespace Seventh.View.Menu
             if (_audioService != null && _transitionSFX != null)
             {
                 _audioService.PlaySFX(_transitionSFX, new AudioSettings(volumeOffset: _transitionSFXVolume - 1f));
+            }
+        }
+
+        private void PlayHoverSound()
+        {
+            if (_audioService != null && _hoverSFX != null)
+            {
+                _audioService.PlaySFX(_hoverSFX, new AudioSettings(volumeOffset: _hoverSFXVolume - 1f));
+            }
+        }
+
+        private void RegisterButtonEvents(Button button)
+        {
+            if (button == null) return;
+            button.RegisterCallback<PointerEnterEvent>(OnPointerEnter);
+            button.RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
+            button.RegisterCallback<FocusInEvent>(OnFocusIn);
+        }
+
+        private void UnregisterButtonEvents(Button button)
+        {
+            if (button == null) return;
+            button.UnregisterCallback<PointerEnterEvent>(OnPointerEnter);
+            button.UnregisterCallback<PointerLeaveEvent>(OnPointerLeave);
+            button.UnregisterCallback<FocusInEvent>(OnFocusIn);
+        }
+
+        private void OnPointerEnter(PointerEnterEvent evt)
+        {
+            if (evt.currentTarget is Button button)
+            {
+                button.Focus();
+            }
+        }
+
+        private void OnPointerLeave(PointerLeaveEvent evt)
+        {
+            if (evt.currentTarget is Button button)
+            {
+                button.Blur();
+            }
+        }
+
+        private void OnFocusIn(FocusInEvent evt)
+        {
+            if (_allowHoverSound)
+            {
+                PlayHoverSound();
             }
         }
 
