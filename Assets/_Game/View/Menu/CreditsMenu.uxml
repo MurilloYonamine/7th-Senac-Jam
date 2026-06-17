@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Game/View/Menu/MainMenu.uss?fileID=7433441132597879392&amp;guid=0a5d6693eac14a14396c2c21f8fcd642&amp;type=3#MainMenu" />
+    <ui:VisualElement name="ScreenContainer" class="modal-backdrop">
+        <!-- Título posicionado no topo -->
+        <ui:Label text="CRÉDITOS" class="logo-text" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); font-size: 72px; position: absolute; top: 80px;" />
+        
+        <!-- Botão Voltar posicionado no rodapé -->
+        <ui:Button text="Voltar" name="BtnBack" class="menu-button" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 320px; font-size: 56px; position: absolute; bottom: 80px;" />
+    </ui:VisualElement>
+</ui:UXML>
