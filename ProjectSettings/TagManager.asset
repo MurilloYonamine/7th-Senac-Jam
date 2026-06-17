@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Void
   layers:
   - Default
   - TransparentFX
@@ -43,6 +44,15 @@ TagManager:
     locked: 0
   - name: Effects
     uniqueID: 911028587
+    locked: 0
+  - name: Scenario
+    uniqueID: 1496413255
+    locked: 0
+  - name: Props
+    uniqueID: 2928611973
+    locked: 0
+  - name: Player
+    uniqueID: 1015662297
     locked: 0
   - name: HUD
     uniqueID: 1341797903
