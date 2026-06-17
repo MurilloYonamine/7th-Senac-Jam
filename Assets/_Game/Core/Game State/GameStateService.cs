@@ -26,8 +26,10 @@ namespace Seventh.Core
 
         public void ChangeGameState(GameState newState)
         {
+            var oldState = CurrentGameState;
             CurrentGameState = newState;
             Debug.Log($"{TAG} Game state changed to {newState}");
+            ServiceLocator.Get<IEventBus>().Publish(new GameStateChangedEvent(oldState, newState));
         }
     }
 }

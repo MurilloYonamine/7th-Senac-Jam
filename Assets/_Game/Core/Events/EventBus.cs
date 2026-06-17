@@ -36,7 +36,8 @@ namespace Seventh.Core.Events
             var eventType = typeof(TEvent);
             if (_subscribers.ContainsKey(eventType))
             {
-                foreach (var subscriber in _subscribers[eventType])
+                var subscribersCopy = new List<Delegate>(_subscribers[eventType]);
+                foreach (var subscriber in subscribersCopy)
                 {
                     if (subscriber is Action<TEvent> action)
                     {

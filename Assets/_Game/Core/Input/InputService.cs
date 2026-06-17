@@ -12,7 +12,6 @@ namespace Seventh.Core.Input
 
         private GameInput _gameInput;
 
-        // =============== Input Actions ===============
         private InputAction _moveAction;
         private InputAction _attackAction;
         private InputAction _dashAction;
@@ -28,15 +27,28 @@ namespace Seventh.Core.Input
             _attackAction = _gameInput.Player.Attack;
             _dashAction = _gameInput.Player.Dash;
             _menuAction = _gameInput.Player.Menu;
+            _menuAction.performed += OnMenuActionPerformed;
             _gameInput.Enable();
         }
 
         public void OnDestroy()
         {
             _gameInput?.Disable();
+            if (_menuAction != null)
+            {
+                _menuAction.performed -= OnMenuActionPerformed;
+            }
 
             ServiceLocator.Get<IEventBus>().Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
             ServiceLocator.Unregister<IInputService>();
+        }
+
+        private void OnMenuActionPerformed(InputAction.CallbackContext ctx)
+        {
+            if (CurrentGameState == GameState.Playing || CurrentGameState == GameState.Paused)
+            {
+                ServiceLocator.Get<IEventBus>().Publish(new PlayerMenuPressedEvent());
+            }
         }
 
         public void GetAttackInput(out bool isAttacking, out Vector2 attackDirection)
@@ -65,7 +77,7 @@ namespace Seventh.Core.Input
 
         public void GetMenuInput(out bool isMenuOpen)
         {
-            if (CurrentGameState != GameState.Playing)
+            if (CurrentGameState != GameState.Playing && CurrentGameState != GameState.Paused)
             {
                 isMenuOpen = false;
                 return;

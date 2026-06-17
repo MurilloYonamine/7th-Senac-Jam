@@ -8,7 +8,6 @@ namespace Seventh.Core.Services
     {
         GameState CurrentGameState { get; }
 
-        // =================== Input Methods ===================
         Vector2 GetMovementInput();
         void GetAttackInput(out bool isAttacking, out Vector2 attackDirection);
         void GetDashInput(out bool isDashing);
