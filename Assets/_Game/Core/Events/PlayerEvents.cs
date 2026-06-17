@@ -27,4 +27,8 @@ namespace Seventh.Core.Events
             CooldownMaxTime = cooldownMaxTime;
         }
     }
+
+    public readonly struct PlayerMenuPressedEvent
+    {
+    }
 }

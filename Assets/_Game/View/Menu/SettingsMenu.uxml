@@ -1,0 +1,42 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Game/View/Menu/MainMenu.uss?fileID=7433441132597879392&amp;guid=0a5d6693eac14a14396c2c21f8fcd642&amp;type=3#MainMenu"/>
+    <ui:VisualElement name="ScreenContainer" class="modal-backdrop">
+        <ui:Label text="OPÇÕES" class="logo-text" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); font-size: 120px; position: absolute; top: 40px;"/>
+        <ui:VisualElement class="modal-box" style="width: 1150px; padding: 65px; border-radius: 24px; background-color: rgba(30, 30, 36, 0.95); border-width: 2px; border-color: rgba(255, 255, 255, 0.1); align-items: center; padding-top: 0; margin-top: 52px;">
+            <ui:VisualElement style="flex-direction: row; justify-content: space-between; width: 100%; margin-bottom: 50px;">
+                <ui:VisualElement name="AudioColumn" style="flex: 1; margin-right: 45px;">
+                    <ui:Label text="VOLUME" class="grape-soda-font" style="font-size: 64px; color: rgb(255, 216, 0); -unity-font-style: bold; margin-bottom: 40px; -unity-text-align: middle-left;"/>
+                    <ui:VisualElement style="margin-bottom: 35px;">
+                        <ui:Label text="Música" class="grape-soda-font" style="font-size: 38px; color: rgb(255, 255, 255); margin-bottom: 12px;"/>
+                        <ui:Slider name="SliderMusic" low-value="0" high-value="1" value="1" show-fill="true" focusable="true"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement style="margin-bottom: 35px;">
+                        <ui:Label text="Efeitos (SFX)" class="grape-soda-font" style="font-size: 38px; color: rgb(255, 255, 255); margin-bottom: 12px;"/>
+                        <ui:Slider name="SliderSFX" low-value="0" high-value="1" value="1" show-fill="true" focusable="true"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement style="margin-bottom: 35px;">
+                        <ui:Label text="Ambiente" class="grape-soda-font" style="font-size: 38px; color: rgb(255, 255, 255); margin-bottom: 12px;"/>
+                        <ui:Slider name="SliderAmbient" low-value="0" high-value="1" value="1" show-fill="true" focusable="true"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement style="width: 2px; background-color: rgba(255, 255, 255, 0.1); margin: 0 45px; align-self: stretch;"/>
+                <ui:VisualElement name="VideoColumn" style="flex: 1; margin-left: 45px;">
+                    <ui:Label text="VÍDEO" class="grape-soda-font" style="font-size: 64px; color: rgb(255, 216, 0); -unity-font-style: bold; margin-bottom: 40px; -unity-text-align: middle-left;"/>
+                    <ui:VisualElement style="margin-bottom: 45px;">
+                        <ui:Label text="Resolução (16:9)" class="grape-soda-font" style="font-size: 38px; color: rgb(255, 255, 255); margin-bottom: 12px;"/>
+                        <ui:DropdownField name="DropdownResolution" focusable="true"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement style="margin-bottom: 40px; flex-direction: row; align-items: center; justify-content: space-between;">
+                        <ui:Label text="Tela Cheia" class="grape-soda-font" style="font-size: 38px; color: rgb(255, 255, 255);"/>
+                        <ui:Toggle name="ToggleFullscreen" focusable="true"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement style="margin-bottom: 40px; flex-direction: row; align-items: center; justify-content: space-between;">
+                        <ui:Label text="V-Sync" class="grape-soda-font" style="font-size: 38px; color: rgb(255, 255, 255);"/>
+                        <ui:Toggle name="ToggleVSync" focusable="true"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:Button text="Voltar" name="BtnBack" class="menu-button" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 360px; font-size: 72px;"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

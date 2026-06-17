@@ -1,4 +1,8 @@
 using UnityEngine;
+using Seventh.Core;
+using Seventh.Core.Constants;
+using Seventh.Core.Events;
+using Seventh.Core.Services;
 
 namespace Seventh.Gameplay.Player
 {
@@ -15,6 +19,8 @@ namespace Seventh.Gameplay.Player
         private PlayerAttack _attack;
         private PlayerHealth _health;
 
+        [SerializeField] private GameObject _pauseMenu;
+
         private void Awake()
         {
             _movement = GetComponent<PlayerMovement>();
@@ -22,6 +28,29 @@ namespace Seventh.Gameplay.Player
             _dash = GetComponent<PlayerDash>();
             _attack = GetComponent<PlayerAttack>();
             _health = GetComponent<PlayerHealth>();
+        }
+
+        private void Start()
+        {
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Subscribe<PlayerMenuPressedEvent>(HandleMenuPressed);
+        }
+
+        private void OnDestroy()
+        {
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Unsubscribe<PlayerMenuPressedEvent>(HandleMenuPressed);
+        }
+
+        private void HandleMenuPressed(PlayerMenuPressedEvent evt)
+        {
+            if (_pauseMenu == null) return;
+
+            var gameStateService = ServiceLocator.Get<IGameStateService>();
+            if (gameStateService != null && gameStateService.CurrentGameState == GameState.Playing)
+            {
+                _pauseMenu.SetActive(true);
+            }
         }
     }
 }
