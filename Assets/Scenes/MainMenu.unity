@@ -187,12 +187,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68e034f892717fe46a369d38f26c9f73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Seventh.View::Seventh.View.Menu.CreditsMenuState
-  _clickSFX: {fileID: 8300000, guid: 4892008bcf65efe42bb080287d3f016a, type: 3}
+  _clickSFX: {fileID: 8300000, guid: 522369bdfd12924439195f8a3e0ed3bc, type: 3}
   _clickSFXVolume: 0.25
   _jumpSFX: {fileID: 8300000, guid: 9c844980df6d0934c9ca7b117219a43f, type: 3}
   _jumpSFXVolume: 1
   _transitionSFX: {fileID: 8300000, guid: 53492108793f1f64ca0fd149f1f803ae, type: 3}
   _transitionSFXVolume: 0.5
+  _hoverSFX: {fileID: 8300000, guid: 3752866f6ea154140959b39ad8f16a7c, type: 3}
+  _hoverSFXVolume: 0.3
 --- !u!1 &113950964
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,10 +400,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e8b1762b15dd204daad1da5c1821c2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Seventh.View::Seventh.View.Menu.SettingsMenuState
-  _clickSFX: {fileID: 8300000, guid: 4892008bcf65efe42bb080287d3f016a, type: 3}
+  _clickSFX: {fileID: 8300000, guid: 522369bdfd12924439195f8a3e0ed3bc, type: 3}
   _clickSFXVolume: 0.5
   _transitionSFX: {fileID: 8300000, guid: 53492108793f1f64ca0fd149f1f803ae, type: 3}
   _transitionSFXVolume: 0.5
+  _hoverSFX: {fileID: 8300000, guid: 3752866f6ea154140959b39ad8f16a7c, type: 3}
+  _hoverSFXVolume: 0.3
 --- !u!1 &748198628
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,10 +704,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Seventh.View::Seventh.View.Menu.MainMenuState
   _settingsState: {fileID: 604342347}
   _creditsState: {fileID: 19700514}
-  _clickSFX: {fileID: 8300000, guid: 472448f3e2afed84499cd0d4b0899043, type: 3}
+  _clickSFX: {fileID: 8300000, guid: b5df9a67c9dc5ff4b8a1c2972b5ccbf1, type: 3}
   _clickSFXVolume: 0.25
   _transitionSFX: {fileID: 8300000, guid: 53492108793f1f64ca0fd149f1f803ae, type: 3}
   _transitionSFXVolume: 0.5
+  _hoverSFX: {fileID: 8300000, guid: 3752866f6ea154140959b39ad8f16a7c, type: 3}
+  _hoverSFXVolume: 0.3
 --- !u!1 &1495400873
 GameObject:
   m_ObjectHideFlags: 0

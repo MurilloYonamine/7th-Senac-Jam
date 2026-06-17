@@ -12,18 +12,16 @@ namespace Seventh.View.Menu
     {
         private UIDocument _uiDocument;
         private Button _btnBack;
-        private MainMenuState _mainState;
+        private MonoBehaviour _parentState;
         private Tween _fadeTween;
         private IAudioService _audioService;
         private bool _allowHoverSound;
         private readonly HashSet<Slider> _activeSliders = new HashSet<Slider>();
 
-        // Elementos de UI - Áudio
         private Slider _sliderMusic;
         private Slider _sliderSFX;
         private Slider _sliderAmbient;
 
-        // Elementos de UI - Vídeo
         private DropdownField _dropdownResolution;
         private Toggle _toggleFullscreen;
         private Toggle _toggleVSync;
@@ -54,9 +52,9 @@ namespace Seventh.View.Menu
             _audioService = ServiceLocator.Get<IAudioService>();
         }
 
-        public void Open(MainMenuState mainState)
+        public void Open(MonoBehaviour parentState)
         {
-            _mainState = mainState;
+            _parentState = parentState;
             gameObject.SetActive(true);
         }
 
@@ -259,9 +257,16 @@ namespace Seventh.View.Menu
         {
             PlayClickSound();
 
-            if (_mainState != null)
+            if (_parentState != null)
             {
-                _mainState.ReturnFromState(this);
+                if (_parentState is MainMenuState mainMenu)
+                {
+                    mainMenu.ReturnFromState(this);
+                }
+                else if (_parentState is PauseMenuState pauseMenu)
+                {
+                    pauseMenu.ReturnFromState(this);
+                }
             }
 
             FadeOut(() => gameObject.SetActive(false));
@@ -293,6 +298,7 @@ namespace Seventh.View.Menu
                 root.style.opacity = 0f;
                 _fadeTween = DOTween.To(() => root.style.opacity.value, x => root.style.opacity = x, 1f, 0.25f)
                     .SetEase(Ease.OutQuad)
+                    .SetUpdate(true)
                     .OnComplete(() => onComplete?.Invoke());
             }
             else
@@ -310,6 +316,7 @@ namespace Seventh.View.Menu
             {
                 _fadeTween = DOTween.To(() => root.style.opacity.value, x => root.style.opacity = x, 0f, 0.2f)
                     .SetEase(Ease.InQuad)
+                    .SetUpdate(true)
                     .OnComplete(() => onComplete?.Invoke());
             }
             else

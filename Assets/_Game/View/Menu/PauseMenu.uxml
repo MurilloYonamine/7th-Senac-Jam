@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Game/View/Menu/MainMenu.uss?fileID=7433441132597879392&amp;guid=0a5d6693eac14a14396c2c21f8fcd642&amp;type=3#MainMenu" />
+    <ui:VisualElement name="ScreenContainer" class="modal-backdrop">
+        <ui:VisualElement class="modal-box" style="width: 550px; padding: 40px; border-radius: 24px; background-color: rgba(30, 30, 36, 0.95); border-width: 2px; border-color: rgba(255, 255, 255, 0.1); align-items: center;">
+            <ui:Label text="PAUSA" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); font-size: 96px; color: rgb(255, 216, 0); -unity-font-style: bold; margin-bottom: 40px;" />
+            <ui:Button text="Continuar" name="BtnResume" class="menu-button" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 400px; font-size: 54px; margin-bottom: 15px;" />
+            <ui:Button text="Opções" name="BtnSettings" class="menu-button" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 400px; font-size: 54px; margin-bottom: 15px;" />
+            <ui:Button text="Menu Principal" name="BtnMainMenu" class="menu-button" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 400px; font-size: 54px; margin-bottom: 15px;" />
+            <ui:Button text="Sair" name="BtnQuit" class="menu-button" style="-unity-font-definition: url(&quot;project://database/Assets/_Game/View/Fonts/GrapeSoda.ttf?fileID=12800000&amp;guid=cc26f4d30b86b7341a3126a1e92f2a95&amp;type=3#GrapeSoda&quot;); width: 400px; font-size: 54px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

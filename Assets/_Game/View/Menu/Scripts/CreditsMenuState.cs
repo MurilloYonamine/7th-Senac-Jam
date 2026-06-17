@@ -148,8 +148,8 @@ namespace Seventh.View.Menu
             }
             _spawnedTags.Clear();
 
-            float startY = -25f; // Começa acima da tela (25% acima do topo)
-            float targetY = 38f; // Posição final (altura no centro-meio da tela)
+            float startY = -25f;
+            float targetY = 38f;
 
             for (int i = 0; i < _creditsNames.Length; i++)
             {
