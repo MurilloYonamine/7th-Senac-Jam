@@ -42,6 +42,8 @@ namespace Seventh.Gameplay.Player
         private Coroutine _poisonCoroutine;
         private Coroutine _flashCoroutine;
         private bool _isLowHealthWarningPlaying;
+        private Vector3 _originalScale;
+        private Quaternion _originalRotation;
 
         protected override void Awake()
         {
@@ -62,6 +64,17 @@ namespace Seventh.Gameplay.Player
             if (_visualModel == null)
             {
                 _visualModel = _spriteRenderer != null ? _spriteRenderer.transform : transform;
+            }
+
+            if (_visualModel != null)
+            {
+                _originalScale = _visualModel.localScale;
+                _originalRotation = _visualModel.localRotation;
+            }
+            else
+            {
+                _originalScale = Vector3.one;
+                _originalRotation = Quaternion.identity;
             }
 
             _eventBus?.Subscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
@@ -177,6 +190,22 @@ namespace Seventh.Gameplay.Player
             {
                 _audioService.PlaySFX(_deathSFX, new AudioSettings(volumeOffset: _deathSFXVolume - 1f));
             }
+
+            // 1. Turn all sprites red to indicate death
+            var renderers = GetComponentsInChildren<SpriteRenderer>();
+            foreach (var r in renderers)
+            {
+                r.DOKill();
+                r.DOColor(Color.red, 0.25f);
+            }
+
+            // 2. Collapse and rotate visual model to simulate falling/collapsing
+            if (_visualModel != null)
+            {
+                _visualModel.DOKill();
+                _visualModel.DOScale(new Vector3(1.3f, 0f, 1f), 0.5f).SetEase(Ease.InQuad);
+                _visualModel.DORotate(new Vector3(0, 0, 90f), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.InQuad);
+            }
         }
 
         private void UpdateLowHealthWarning()
@@ -218,6 +247,45 @@ namespace Seventh.Gameplay.Player
                 _spriteRenderer.color = Color.white; // Restore default
             }
             _flashCoroutine = null;
+        }
+
+        /// <summary>
+        /// Respawns the player at a designated position, resetting health and visuals.
+        /// </summary>
+        public void Respawn(Vector3 respawnPosition)
+        {
+            ResetHealth();
+            transform.position = respawnPosition;
+
+            if (TryGetComponent<Rigidbody2D>(out var rb))
+            {
+#if UNITY_6000_0_OR_NEWER
+                rb.linearVelocity = Vector2.zero;
+#else
+                rb.velocity = Vector2.zero;
+#endif
+            }
+
+            if (_visualModel != null)
+            {
+                _visualModel.DOKill();
+                _visualModel.localScale = _originalScale;
+                _visualModel.localRotation = _originalRotation;
+            }
+
+            var renderers = GetComponentsInChildren<SpriteRenderer>();
+            foreach (var r in renderers)
+            {
+                r.DOKill();
+                r.color = Color.white;
+            }
+
+            if (_poisonCoroutine != null)
+            {
+                StopCoroutine(_poisonCoroutine);
+            }
+            _poisonCoroutine = StartCoroutine(PoisonRoutine());
+            UpdateLowHealthWarning();
         }
     }
 }

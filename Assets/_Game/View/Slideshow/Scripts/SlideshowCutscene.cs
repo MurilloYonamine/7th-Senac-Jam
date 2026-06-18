@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
 using DG.Tweening;
+using Seventh.Core.Services;
+using Seventh.Core.Constants;
 
 namespace Seventh.View
 {
@@ -23,6 +25,9 @@ namespace Seventh.View
         [SerializeField] private Image _backgroundImage;
         [SerializeField] private TextMeshProUGUI _dialogueTextElement;
         [SerializeField] private CanvasGroup _mainCanvasGroup;
+        [SerializeField] private CanvasGroup _contentCanvasGroup;
+
+        private CanvasGroup TransitionCanvasGroup => _contentCanvasGroup != null ? _contentCanvasGroup : _mainCanvasGroup;
 
         [Header("Input")]
         [SerializeField] private InputActionReference _advanceAction;
@@ -95,6 +100,17 @@ namespace Seventh.View
 
             KillAllTweens();
             _onCutsceneStart?.Invoke();
+
+            if (ServiceLocator.TryGet<IGameStateService>(out var gameStateService))
+            {
+                gameStateService.ChangeGameState(GameState.Cutscene);
+            }
+
+            _mainCanvasGroup.alpha = 0f;
+            if (_contentCanvasGroup != null)
+            {
+                _contentCanvasGroup.alpha = 1f;
+            }
 
             if (_backgroundImage != null)
             {
@@ -191,7 +207,7 @@ namespace Seventh.View
             _isTransitioning = true;
             KillAllTweens();
 
-            _canvasFadeTween = _mainCanvasGroup.DOFade(0f, _canvasFadeDuration)
+            _canvasFadeTween = TransitionCanvasGroup.DOFade(0f, _canvasFadeDuration)
                 .OnComplete(() =>
                 {
                     if (_backgroundImage != null)
@@ -212,7 +228,7 @@ namespace Seventh.View
                     _dialogueTextElement.maxVisibleCharacters = 0;
                     _dialogueTextElement.alpha = 0f;
 
-                    _canvasFadeTween = _mainCanvasGroup.DOFade(1f, _canvasFadeDuration)
+                    _canvasFadeTween = TransitionCanvasGroup.DOFade(1f, _canvasFadeDuration)
                         .OnComplete(() =>
                         {
                             _isTransitioning = false;
@@ -231,6 +247,12 @@ namespace Seventh.View
                 .OnComplete(() =>
                 {
                     gameObject.SetActive(false);
+
+                    if (ServiceLocator.TryGet<IGameStateService>(out var gameStateService))
+                    {
+                        gameStateService.ChangeGameState(GameState.Playing);
+                    }
+
                     _onCutsceneEnd?.Invoke();
                     _isTransitioning = false;
                 });
