@@ -2304,7 +2304,7 @@ MonoBehaviour:
   _doorOpenDuration: 0.8
   _slideUpDistance: 2.5
   _fadeSprite: 1
-  _unlockSFX: {fileID: 8300000, guid: 5df9562b8dd54e441ac516300aac1790, type: 3}
+  _unlockSFX: {fileID: 8300000, guid: 7a6aebde758d00141a9e917a8edc9bef, type: 3}
   _unlockSFXVolume: 0.1
 --- !u!61 &296869561
 BoxCollider2D:
@@ -2670,7 +2670,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Bata nele\nX - Controle\nBot\xE3o esquerdo mouse"
+  m_text: "Bata em inmigos para regenerar vida\nX - Controle\nBot\xE3o esquerdo mouse"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ef9972a9eb817a3468e1ccb731761e62, type: 2}
   m_sharedMaterial: {fileID: -7182436687243436402, guid: ef9972a9eb817a3468e1ccb731761e62, type: 2}
@@ -2697,7 +2697,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 62.2
+  m_fontSize: 56.05
   m_fontSizeBase: 70.42
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -27425,7 +27425,7 @@ MonoBehaviour:
   _doorOpenDuration: 0.8
   _slideUpDistance: 2.5
   _fadeSprite: 1
-  _unlockSFX: {fileID: 8300000, guid: 5df9562b8dd54e441ac516300aac1790, type: 3}
+  _unlockSFX: {fileID: 8300000, guid: 7a6aebde758d00141a9e917a8edc9bef, type: 3}
   _unlockSFXVolume: 0.1
 --- !u!61 &881593889
 BoxCollider2D:
@@ -38253,14 +38253,24 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: 14, y: 27, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 1
+      m_TileSpriteIndex: 1
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   m_AnimatedTiles: {}
   m_TileAssetArray:
   - serializedVersion: 2
     m_RefCount: 705
     m_Data: {fileID: 11400000, guid: 6b3d5a678c0fce14b984234469755b25, type: 2}
   - serializedVersion: 2
-    m_RefCount: 0
-    m_Data: {fileID: 11400000, guid: 45bf16511b800e34ba4b6fb2606d4e0c, type: 2}
+    m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 7b6e3abd533e8674080963f91c8a99dc, type: 2}
   - serializedVersion: 2
     m_RefCount: 267
     m_Data: {fileID: 11400000, guid: 907fa7c96a381014486d0d027e75001d, type: 2}
@@ -38269,14 +38279,14 @@ Tilemap:
     m_RefCount: 705
     m_Data: {fileID: 4555000845208830200, guid: e65f1e38b26ebd040af43fc6fa2afa93, type: 3}
   - serializedVersion: 2
-    m_RefCount: 0
-    m_Data: {fileID: 1914176469264057693, guid: e65f1e38b26ebd040af43fc6fa2afa93, type: 3}
+    m_RefCount: 1
+    m_Data: {fileID: -4461057616392306068, guid: e65f1e38b26ebd040af43fc6fa2afa93, type: 3}
   - serializedVersion: 2
     m_RefCount: 267
     m_Data: {fileID: 4582227269437818281, guid: e65f1e38b26ebd040af43fc6fa2afa93, type: 3}
   m_TileMatrixArray:
   - serializedVersion: 2
-    m_RefCount: 898
+    m_RefCount: 899
     m_Data:
       e00: 1
       e01: 0
@@ -38315,13 +38325,13 @@ Tilemap:
       e33: 1
   m_TileColorArray:
   - serializedVersion: 2
-    m_RefCount: 972
+    m_RefCount: 973
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: -96, y: -38, z: 0}
-  m_Size: {x: 162, y: 58, z: 1}
+  m_Size: {x: 162, y: 66, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -38382,6 +38392,14 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 966132108}
     m_ColliderPaths:
+    - - X: 149062496
+        Y: 279062496
+      - X: 140937504
+        Y: 279062496
+      - X: 140937504
+        Y: 270937504
+      - X: 149062496
+        Y: 270937504
     - - X: 520000000
         Y: 120000000
       - X: 660000000
@@ -38450,6 +38468,14 @@ CompositeCollider2D:
         Y: -60000000
       - X: -540000000
         Y: -60000000
+    - - X: -760000000
+        Y: 40000000
+      - X: -790000000
+        Y: 40000000
+      - X: -790000000
+        Y: 10000000
+      - X: -760000000
+        Y: 10000000
     - - X: 500000000
         Y: 40000000
       - X: 470000000
@@ -38465,14 +38491,6 @@ CompositeCollider2D:
       - X: 530000000
         Y: 10000000
       - X: 580000000
-        Y: 10000000
-    - - X: -760000000
-        Y: 40000000
-      - X: -790000000
-        Y: 40000000
-      - X: -790000000
-        Y: 10000000
-      - X: -760000000
         Y: 10000000
     - - X: -930000000
         Y: 40000000
@@ -38506,14 +38524,6 @@ CompositeCollider2D:
         Y: -30000000
       - X: -320000000
         Y: -30000000
-    - - X: -930000000
-        Y: -10000000
-      - X: -960000000
-        Y: -10000000
-      - X: -960000000
-        Y: -40000000
-      - X: -930000000
-        Y: -40000000
     - - X: -840000000
         Y: -10000000
       - X: -880000000
@@ -38529,6 +38539,14 @@ CompositeCollider2D:
       - X: 530000000
         Y: -40000000
       - X: 580000000
+        Y: -40000000
+    - - X: -930000000
+        Y: -10000000
+      - X: -960000000
+        Y: -10000000
+      - X: -960000000
+        Y: -40000000
+      - X: -930000000
         Y: -40000000
     - - X: 500000000
         Y: -10000000
@@ -38612,6 +38630,10 @@ CompositeCollider2D:
         Y: -360000000
   m_CompositePaths:
     m_Paths:
+    - - {x: 14.906221, y: 27.09375}
+      - {x: 14.906221, y: 27.90625}
+      - {x: 14.093751, y: 27.906221}
+      - {x: 14.09378, y: 27.09375}
     - - {x: 51.999973, y: 10}
       - {x: 52.00003, y: 12}
       - {x: 66, y: 12.00003}
@@ -73595,7 +73617,7 @@ MonoBehaviour:
   _doorOpenDuration: 0.8
   _slideUpDistance: 2.5
   _fadeSprite: 1
-  _unlockSFX: {fileID: 8300000, guid: 5df9562b8dd54e441ac516300aac1790, type: 3}
+  _unlockSFX: {fileID: 8300000, guid: 7a6aebde758d00141a9e917a8edc9bef, type: 3}
   _unlockSFXVolume: 0.1
 --- !u!61 &1544295023
 BoxCollider2D:
@@ -80362,6 +80384,8 @@ MonoBehaviour:
   _damageCollider: {fileID: 1627546627}
   _damageAmount: 10
   _knockbackForce: 4
+  _damageSFX: {fileID: 0}
+  _sfxVolume: 1
 --- !u!4 &1635346669 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7991668645339909511, guid: 8fcb6916eb7f89a4fa3410cb17124e7d, type: 3}
@@ -82228,7 +82252,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 16
+  orthographic size: 22
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -82317,7 +82341,7 @@ MonoBehaviour:
   _charactersPerSecond: 30
   _canvasFadeDuration: 0.3
   _textFadeDuration: 0.5
-  _loadSceneOnEnd: 0
+  _loadSceneOnEnd: 1
   _sceneNameToLoad: MainMenu
   _onCutsceneStart:
     m_PersistentCalls:
@@ -83476,6 +83500,18 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 519420031}
+    - target: {fileID: 5634368088913510966, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
+      propertyPath: _voidFallSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 84e7cc2d3d2f5384cb4abedbe362a30b, type: 3}
+    - target: {fileID: 5634368088913510966, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
+      propertyPath: _fallDuration
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5634368088913510966, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
+      propertyPath: _voidFallVolume
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 5679742139103901472, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
       propertyPath: m_SortingLayer
       value: 3
