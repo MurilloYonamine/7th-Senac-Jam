@@ -9,6 +9,7 @@ namespace Seventh.Gameplay.Enemy
         [SerializeField] private float _speed = 10f;
         [SerializeField] private int _damage = 1;
         [SerializeField] private float _knockback = 5f;
+        [SerializeField] private float _lifetime = 5f;
         
         private Rigidbody2D _rb;
 
@@ -20,6 +21,7 @@ namespace Seventh.Gameplay.Enemy
         private void Start()
         {
             _rb.linearVelocity = transform.right * _speed;
+            Destroy(gameObject, _lifetime);
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
