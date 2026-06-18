@@ -38,9 +38,21 @@ namespace Seventh.Gameplay.Enemy
             Vector2 toPlayer = _controller.PlayerTransform.position - _controller.transform.position;
             float distance = toPlayer.magnitude;
 
-            AimWeaponIn4Directions(toPlayer);
+            _controller.AimWeapon(toPlayer);
 
-            // Se o player está mais perto que a safe distance, fuja!
+            // Se for variação de tiro, ele não se move (fica parado mirando e atirando)
+            if (_controller.CanShoot)
+            {
+                _controller.HopMovement.Stop();
+
+                if (_timeSinceLastShot >= _controller.ShootCooldown)
+                {
+                    _stateMachine.ChangeState(new CowardShootState(_controller, _stateMachine));
+                }
+                return;
+            }
+
+            // Variação que apenas foge (não atira):
             if (distance < _controller.SafeDistance)
             {
                 Vector2 fleeDirection = -toPlayer.normalized;
@@ -79,38 +91,13 @@ namespace Seventh.Gameplay.Enemy
             }
             else
             {
-                // Se está longe o suficiente, pare de fugir
                 _controller.HopMovement.Stop();
-
-                // Se o cooldown acabou, mude para o estado de tiro
-                if (_timeSinceLastShot >= _controller.ShootCooldown)
-                {
-                    _stateMachine.ChangeState(new CowardShootState(_controller, _stateMachine));
-                }
             }
         }
 
         public void Exit()
         {
             _controller.HopMovement.Stop();
-        }
-
-        private void AimWeaponIn4Directions(Vector2 toPlayer)
-        {
-            if (_controller.WeaponPivot == null) return;
-
-            Vector2 aimDirection;
-
-            if (Mathf.Abs(toPlayer.x) > Mathf.Abs(toPlayer.y))
-            {
-                aimDirection = toPlayer.x > 0 ? Vector2.right : Vector2.left;
-            }
-            else
-            {
-                aimDirection = toPlayer.y > 0 ? Vector2.up : Vector2.down;
-            }
-
-            _controller.WeaponPivot.right = aimDirection;
         }
     }
 }

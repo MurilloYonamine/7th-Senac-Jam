@@ -5,6 +5,7 @@ using Seventh.Core.Events;
 using Seventh.Core.Services;
 using AudioSettings = Seventh.Core.Services.AudioSettings;
 using Seventh.Gameplay.Health;
+using Seventh.Core.Constants;
 
 namespace Seventh.Gameplay.Player
 {
@@ -42,6 +43,8 @@ namespace Seventh.Gameplay.Player
         private Coroutine _poisonCoroutine;
         private Coroutine _flashCoroutine;
         private bool _isLowHealthWarningPlaying;
+        private Vector3 _originalScale;
+        private Quaternion _originalRotation;
 
         protected override void Awake()
         {
@@ -64,13 +67,26 @@ namespace Seventh.Gameplay.Player
                 _visualModel = _spriteRenderer != null ? _spriteRenderer.transform : transform;
             }
 
+            if (_visualModel != null)
+            {
+                _originalScale = _visualModel.localScale;
+                _originalRotation = _visualModel.localRotation;
+            }
+            else
+            {
+                _originalScale = Vector3.one;
+                _originalRotation = Quaternion.identity;
+            }
+
             _eventBus?.Subscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
             _poisonCoroutine = StartCoroutine(PoisonRoutine());
         }
 
         private void OnDestroy()
         {
             _eventBus?.Unsubscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
 
             if (_poisonCoroutine != null)
             {
@@ -96,12 +112,25 @@ namespace Seventh.Gameplay.Player
             _eventBus?.Publish(new PlayerHealthChangedEvent(CurrentHealth, MaxHealth));
         }
 
+        private void OnGameStateChanged(GameStateChangedEvent evt)
+        {
+            UpdateLowHealthWarning();
+        }
+
         private IEnumerator PoisonRoutine()
         {
             var wait = new WaitForSeconds(_poisonInterval);
             while (true)
             {
                 yield return wait;
+
+                // Stop poison if currently in a cutscene
+                if (ServiceLocator.TryGet<IGameStateService>(out var gameStateService) &&
+                    gameStateService.CurrentGameState == GameState.Cutscene)
+                {
+                    continue;
+                }
+
                 if (CurrentHealth > 0)
                 {
                     TakeDamage(new DamageInfo(_poisonDamage, 0f, Vector2.zero, null, HitIntensity.Light, isSilent: true));
@@ -177,15 +206,49 @@ namespace Seventh.Gameplay.Player
             {
                 _audioService.PlaySFX(_deathSFX, new AudioSettings(volumeOffset: _deathSFXVolume - 1f));
             }
+
+            // 1. Turn all sprites red to indicate death
+            var renderers = GetComponentsInChildren<SpriteRenderer>();
+            foreach (var r in renderers)
+            {
+                r.DOKill();
+                r.DOColor(Color.red, 0.25f);
+            }
+
+            // 2. Collapse and rotate visual model to simulate falling/collapsing
+            if (_visualModel != null)
+            {
+                _visualModel.DOKill();
+                _visualModel.DOScale(new Vector3(1.3f, 0f, 1f), 0.5f).SetEase(Ease.InQuad);
+                _visualModel.DORotate(new Vector3(0, 0, 90f), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.InQuad);
+            }
         }
 
         private void UpdateLowHealthWarning()
         {
             if (_audioService == null || _lowHealthWarningSFX == null) return;
 
+            // Check if game is in a cutscene
+            bool isInCutscene = false;
+            if (ServiceLocator.TryGet<IGameStateService>(out var gameStateService))
+            {
+                isInCutscene = gameStateService.CurrentGameState == GameState.Cutscene;
+            }
+
             float healthPercentage = MaxHealth > 0 ? (float)CurrentHealth / MaxHealth : 1f;
 
-            if (CurrentHealth > 0 && healthPercentage <= _lowHealthWarningThreshold)
+            // Stop heartbeat warning if dead OR in cutscene
+            if (CurrentHealth <= 0 || isInCutscene)
+            {
+                if (_isLowHealthWarningPlaying)
+                {
+                    _isLowHealthWarningPlaying = false;
+                    _audioService.StopSFX(_lowHealthWarningSFX);
+                }
+                return;
+            }
+
+            if (healthPercentage <= _lowHealthWarningThreshold)
             {
                 if (!_isLowHealthWarningPlaying)
                 {
@@ -218,6 +281,48 @@ namespace Seventh.Gameplay.Player
                 _spriteRenderer.color = Color.white; // Restore default
             }
             _flashCoroutine = null;
+        }
+
+        /// <summary>
+        /// Respawns the player at a designated position, resetting health and visuals.
+        /// </summary>
+        public void Respawn(Vector3 respawnPosition)
+        {
+            ResetHealth();
+            transform.position = respawnPosition;
+
+            if (TryGetComponent<Rigidbody2D>(out var rb))
+            {
+#if UNITY_6000_0_OR_NEWER
+                rb.linearVelocity = Vector2.zero;
+#else
+                rb.velocity = Vector2.zero;
+#endif
+            }
+
+            if (_visualModel != null)
+            {
+                _visualModel.DOKill();
+                _visualModel.localScale = _originalScale;
+                _visualModel.localRotation = _originalRotation;
+            }
+
+            var renderers = GetComponentsInChildren<SpriteRenderer>();
+            foreach (var r in renderers)
+            {
+                r.DOKill();
+                r.color = Color.white;
+            }
+
+            if (_poisonCoroutine != null)
+            {
+                StopCoroutine(_poisonCoroutine);
+            }
+            _poisonCoroutine = StartCoroutine(PoisonRoutine());
+            UpdateLowHealthWarning();
+
+            // Reactivate and reset all enemies
+            Seventh.Gameplay.Enemies.Enemy.ReactivateAllEnemies();
         }
     }
 }

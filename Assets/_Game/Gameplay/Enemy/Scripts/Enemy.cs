@@ -28,6 +28,9 @@ namespace Seventh.Gameplay.Enemies
         protected Animator AnimatorComponent;
         protected SpriteRenderer SpriteRendererComponent;
 
+        public Animator Animator => AnimatorComponent;
+        public SpriteRenderer SpriteRenderer => SpriteRendererComponent;
+
         private Coroutine _flashCoroutine;
         private Coroutine _hitstopCoroutine;
         private Material _originalMaterial;
@@ -35,6 +38,35 @@ namespace Seventh.Gameplay.Enemies
 
         private float _stunTimer;
         public bool IsStunned => _stunTimer > 0f;
+
+        private Vector3 _spawnPosition;
+        private Quaternion _spawnRotation;
+        private static readonly System.Collections.Generic.List<Enemy> AllEnemies = new System.Collections.Generic.List<Enemy>();
+
+        [Header("Orientation Settings")]
+        [SerializeField] private bool _flipOnRightAim = true;
+
+        public void UpdateAnimatorParameters(Vector2 direction)
+        {
+            if (AnimatorComponent == null) return;
+
+            // Update Blend Tree parameters
+            AnimatorComponent.SetFloat("MoveX", direction.x);
+            AnimatorComponent.SetFloat("MoveY", direction.y);
+
+            // Flip the sprite depending on aiming direction and configuration
+            if (SpriteRendererComponent != null)
+            {
+                if (direction.x > 0.01f)
+                {
+                    SpriteRendererComponent.flipX = _flipOnRightAim;
+                }
+                else if (direction.x < -0.01f)
+                {
+                    SpriteRendererComponent.flipX = !_flipOnRightAim;
+                }
+            }
+        }
 
         protected virtual void Update()
         {
@@ -54,6 +86,10 @@ namespace Seventh.Gameplay.Enemies
             {
                 _originalMaterial = SpriteRendererComponent.material;
             }
+
+            _spawnPosition = transform.position;
+            _spawnRotation = transform.rotation;
+            AllEnemies.Add(this);
         }
 
         protected virtual void OnEnable()
@@ -76,6 +112,8 @@ namespace Seventh.Gameplay.Enemies
 
         protected virtual void OnDestroy()
         {
+            AllEnemies.Remove(this);
+
             if (_currentFlashMaterial != null)
             {
                 Destroy(_currentFlashMaterial);
@@ -160,7 +198,31 @@ namespace Seventh.Gameplay.Enemies
 
             ServiceLocator.Get<IEventBus>()?.Publish(new EnemyDefeatedEvent(gameObject));
 
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+        }
+
+        public static void ReactivateAllEnemies()
+        {
+            var enemiesCopy = new System.Collections.Generic.List<Enemy>(AllEnemies);
+            foreach (var enemy in enemiesCopy)
+            {
+                if (enemy == null) continue;
+
+                enemy.gameObject.SetActive(true);
+                enemy.transform.position = enemy._spawnPosition;
+                enemy.transform.rotation = enemy._spawnRotation;
+
+                if (enemy.HealthComponent != null)
+                {
+                    enemy.HealthComponent.ResetHealth();
+                }
+
+                var cowardController = enemy.GetComponent<Seventh.Gameplay.Enemy.CowardEnemyController>();
+                if (cowardController != null)
+                {
+                    cowardController.ResetControllerState();
+                }
+            }
         }
 
         private IEnumerator FlashRoutine(float duration)

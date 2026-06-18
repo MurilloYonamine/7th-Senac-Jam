@@ -20,6 +20,7 @@ namespace Seventh.View.Menu
         [Header("Telas de Destino (Estados)")]
         [SerializeField] private SettingsMenuState _settingsState;
         [SerializeField] private CreditsMenuState _creditsState;
+        [SerializeField] private SlideshowCutscene _cutscene;
 
         [Header("Configurações de Áudio")]
         [SerializeField] private AudioClip _clickSFX;
@@ -28,6 +29,8 @@ namespace Seventh.View.Menu
         [Range(0f, 1f)] [SerializeField] private float _transitionSFXVolume = 1f;
         [SerializeField] private AudioClip _hoverSFX;
         [Range(0f, 1f)] [SerializeField] private float _hoverSFXVolume = 1f;
+
+        [SerializeField] private GameObject[] _backgrounds;
 
         private bool _restoringFocus;
         private string _buttonToFocusName;
@@ -116,6 +119,35 @@ namespace Seventh.View.Menu
         private void OnPlayClicked()
         {
             PlayClickSound();
+            Seventh.Gameplay.Environment.HideAfterDeaths.ResetSessionDeaths();
+            if (_cutscene != null)
+            {
+                _cutscene._onCutsceneEnd.RemoveListener(OnCutsceneFinished);
+                _cutscene._onCutsceneEnd.AddListener(OnCutsceneFinished);
+
+                for (int i = 0; i < _backgrounds.Length; i++)
+                {
+                    _backgrounds[i].SetActive(false);
+                }
+
+                FadeOut(() =>
+                {
+                    gameObject.SetActive(false);
+                    _cutscene.StartCutscene();
+                });
+            }
+            else
+            {
+                SceneManager.LoadScene("GameScene");
+            }
+        }
+
+        private void OnCutsceneFinished()
+        {
+            if (_cutscene != null)
+            {
+                _cutscene._onCutsceneEnd.RemoveListener(OnCutsceneFinished);
+            }
             SceneManager.LoadScene("GameScene");
         }
 

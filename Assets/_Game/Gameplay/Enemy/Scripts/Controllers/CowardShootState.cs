@@ -31,10 +31,10 @@ namespace Seventh.Gameplay.Enemy
             Vector2 toPlayer = _controller.PlayerTransform.position - _controller.transform.position;
             float distance = toPlayer.magnitude;
 
-            AimWeaponIn4Directions(toPlayer);
+            _controller.AimWeapon(toPlayer);
 
-            // Se o player se aproximar demais enquanto se preparava pra atirar, aborta e foge
-            if (distance < _controller.SafeDistance * 0.8f)
+            // Se o player se aproximar demais enquanto se preparava pra atirar, aborta e foge (apenas se for variação que foge)
+            if (!_controller.CanShoot && distance < _controller.SafeDistance * 0.8f)
             {
                 _stateMachine.ChangeState(new CowardFleeState(_controller, _stateMachine));
                 return;
@@ -58,24 +58,6 @@ namespace Seventh.Gameplay.Enemy
 
         public void Exit()
         {
-        }
-
-        private void AimWeaponIn4Directions(Vector2 toPlayer)
-        {
-            if (_controller.WeaponPivot == null) return;
-
-            Vector2 aimDirection;
-
-            if (Mathf.Abs(toPlayer.x) > Mathf.Abs(toPlayer.y))
-            {
-                aimDirection = toPlayer.x > 0 ? Vector2.right : Vector2.left;
-            }
-            else
-            {
-                aimDirection = toPlayer.y > 0 ? Vector2.up : Vector2.down;
-            }
-
-            _controller.WeaponPivot.right = aimDirection;
         }
     }
 }

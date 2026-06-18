@@ -18,6 +18,10 @@ namespace Seventh.Gameplay.Player
         [SerializeField] private int _damageOnFall = 20;
         [SerializeField] private float _safePositionInterval = 0.3f;
 
+        [Header("Audio Settings")]
+        [SerializeField] private AudioClip _voidFallSFX;
+        [Range(0f, 1f)][SerializeField] private float _voidFallVolume = 1f;
+
         private PlayerMovement _movement;
         private PlayerHealth _health;
         private PlayerDash _dash;
@@ -34,6 +38,8 @@ namespace Seventh.Gameplay.Player
         private bool _isFalling;
         private Collider2D _activeVoidCollider;
         private float _graceTimer;
+
+        private List<Collider2D> _disabledColliders = new List<Collider2D>();
 
         private struct SpriteColorInfo
         {
@@ -104,6 +110,27 @@ namespace Seventh.Gameplay.Player
             _graceTimer = 0f;
             _activeVoidCollider = null;
 
+            // Restore colliders if reset occurs mid-fall
+            foreach (var col in _disabledColliders)
+            {
+                if (col != null)
+                {
+                    col.enabled = true;
+                }
+            }
+            _disabledColliders.Clear();
+
+            var rb = GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.bodyType = RigidbodyType2D.Dynamic;
+#if UNITY_6000_0_OR_NEWER
+                rb.linearVelocity = Vector2.zero;
+#else
+                rb.velocity = Vector2.zero;
+#endif
+            }
+
             if (_movement != null)
             {
                 _gameStateService?.ChangeGameState(GameState.Playing);
@@ -134,6 +161,12 @@ namespace Seventh.Gameplay.Player
             }
 
             if (_isFalling) return;
+
+            if (_dash != null && _dash.IsDashing)
+            {
+                _holdTimer = 0f;
+                return;
+            }
 
             bool isPlaying = _gameStateService == null || _gameStateService.CurrentGameState == GameState.Playing;
             if (!_isInsideVoid && isPlaying && _graceTimer <= 0f)
@@ -172,11 +205,6 @@ namespace Seventh.Gameplay.Player
             {
                 _isInsideVoid = true;
                 _activeVoidCollider = other;
-
-                if (_dash != null && _dash.IsDashing && _graceTimer <= 0f)
-                {
-                    StartFallSequence();
-                }
             }
         }
 
@@ -205,11 +233,6 @@ namespace Seventh.Gameplay.Player
             {
                 _isInsideVoid = true;
                 _activeVoidCollider = collision.collider;
-
-                if (_dash != null && _dash.IsDashing && _graceTimer <= 0f)
-                {
-                    StartFallSequence();
-                }
             }
         }
 
@@ -240,15 +263,46 @@ namespace Seventh.Gameplay.Player
                 _gameStateService.ChangeGameState(GameState.Cutscene);
             }
 
+            if (_voidFallSFX != null)
+            {
+                var audioService = ServiceLocator.Get<IAudioService>();
+                if (audioService != null)
+                {
+                    audioService.PlaySFX(_voidFallSFX, new Core.Services.AudioSettings(volumeOffset: _voidFallVolume - 1f));
+                }
+            }
+
             if (_dash != null && _dash.IsDashing)
             {
                 _dash.CancelDash();
             }
 
+            // Disable player colliders during the fall sequence
+            _disabledColliders.Clear();
+            var colliders = GetComponentsInChildren<Collider2D>();
+            foreach (var col in colliders)
+            {
+                if (col.enabled)
+                {
+                    col.enabled = false;
+                    _disabledColliders.Add(col);
+                }
+            }
+
             CacheSpriteRenderers();
 
-            Transform visual = _movement.VisualModel != null ? _movement.VisualModel : transform;
+            var rb = GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.bodyType = RigidbodyType2D.Kinematic;
+#if UNITY_6000_0_OR_NEWER
+                rb.linearVelocity = Vector2.zero;
+#else
+                rb.velocity = Vector2.zero;
+#endif
+            }
 
+            Transform visual = _movement.VisualModel != null ? _movement.VisualModel : transform;
             visual.DOKill();
             transform.DOKill();
 
@@ -257,20 +311,42 @@ namespace Seventh.Gameplay.Player
             if (_activeVoidCollider != null)
             {
                 Vector3 targetCenter = _activeVoidCollider.bounds.center;
-                // Maintain current Z coordinate
                 targetCenter.z = transform.position.z;
-                fallSeq.Join(transform.DOMove(targetCenter, _fallDuration).SetEase(Ease.OutQuad));
+
+                // Move towards void center, clamped to max 0.7f units (approx 1 tile size) to look natural
+                Vector3 directionToCenter = (targetCenter - transform.position).normalized;
+                float distanceToCenter = Vector3.Distance(transform.position, targetCenter);
+                float stepDistance = Mathf.Min(distanceToCenter, 0.7f);
+                Vector3 targetPosition = transform.position + directionToCenter * stepDistance;
+                targetPosition.z = transform.position.z;
+
+                // Step 1: Slide into the void
+                float slideDuration = 0.22f;
+                fallSeq.Append(transform.DOMove(targetPosition, slideDuration).SetEase(Ease.OutQuad));
+
+                // Step 2: Spin and shrink once inside the void area
+                fallSeq.Append(visual.DORotate(new Vector3(0, 0, 720f), _fallDuration, RotateMode.FastBeyond360).SetEase(Ease.InQuad));
+                fallSeq.Join(visual.DOScale(Vector3.zero, _fallDuration).SetEase(Ease.InQuad));
+
+                foreach (var info in _spriteColors)
+                {
+                    if (info.Renderer == null) continue;
+                    fallSeq.Join(info.Renderer.DOColor(Color.black, _fallDuration * 0.5f).SetEase(Ease.InQuad));
+                    fallSeq.Join(info.Renderer.DOFade(0f, _fallDuration).SetEase(Ease.InQuad));
+                }
             }
-
-            fallSeq.Join(visual.DORotate(new Vector3(0, 0, 720f), _fallDuration, RotateMode.FastBeyond360).SetEase(Ease.InQuad));
-
-            fallSeq.Join(visual.DOScale(Vector3.zero, _fallDuration).SetEase(Ease.InQuad));
-
-            foreach (var info in _spriteColors)
+            else
             {
-                if (info.Renderer == null) continue;
-                fallSeq.Join(info.Renderer.DOColor(Color.black, _fallDuration * 0.5f).SetEase(Ease.InQuad));
-                fallSeq.Join(info.Renderer.DOFade(0f, _fallDuration).SetEase(Ease.InQuad));
+                // Fallback sequence if no collider was found
+                fallSeq.Append(visual.DORotate(new Vector3(0, 0, 720f), _fallDuration, RotateMode.FastBeyond360).SetEase(Ease.InQuad));
+                fallSeq.Join(visual.DOScale(Vector3.zero, _fallDuration).SetEase(Ease.InQuad));
+
+                foreach (var info in _spriteColors)
+                {
+                    if (info.Renderer == null) continue;
+                    fallSeq.Join(info.Renderer.DOColor(Color.black, _fallDuration * 0.5f).SetEase(Ease.InQuad));
+                    fallSeq.Join(info.Renderer.DOFade(0f, _fallDuration).SetEase(Ease.InQuad));
+                }
             }
 
             fallSeq.OnComplete(() =>
@@ -281,6 +357,16 @@ namespace Seventh.Gameplay.Player
 
         private void HandleFallComplete(Transform visual)
         {
+            // Re-enable colliders
+            foreach (var col in _disabledColliders)
+            {
+                if (col != null)
+                {
+                    col.enabled = true;
+                }
+            }
+            _disabledColliders.Clear();
+
             // Apply damage
             _health.TakeDamage(new DamageInfo(_damageOnFall, 0f, Vector2.zero, null, HitIntensity.Light, isSilent: false));
 
@@ -292,6 +378,7 @@ namespace Seventh.Gameplay.Player
                 var rb = GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {
+                    rb.bodyType = RigidbodyType2D.Dynamic;
 #if UNITY_6000_0_OR_NEWER
                     rb.linearVelocity = Vector2.zero;
 #else
@@ -328,6 +415,17 @@ namespace Seventh.Gameplay.Player
             }
             else
             {
+                var rb = GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.bodyType = RigidbodyType2D.Dynamic;
+#if UNITY_6000_0_OR_NEWER
+                    rb.linearVelocity = Vector2.zero;
+#else
+                    rb.velocity = Vector2.zero;
+#endif
+                }
+
                 // Player died, keep disabled and let death handles run
                 _isFalling = false;
             }
