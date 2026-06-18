@@ -135,6 +135,12 @@ namespace Seventh.Gameplay.Player
 
             if (_isFalling) return;
 
+            if (_dash != null && _dash.IsDashing)
+            {
+                _holdTimer = 0f;
+                return;
+            }
+
             bool isPlaying = _gameStateService == null || _gameStateService.CurrentGameState == GameState.Playing;
             if (!_isInsideVoid && isPlaying && _graceTimer <= 0f)
             {
@@ -172,11 +178,6 @@ namespace Seventh.Gameplay.Player
             {
                 _isInsideVoid = true;
                 _activeVoidCollider = other;
-
-                if (_dash != null && _dash.IsDashing && _graceTimer <= 0f)
-                {
-                    StartFallSequence();
-                }
             }
         }
 
@@ -205,11 +206,6 @@ namespace Seventh.Gameplay.Player
             {
                 _isInsideVoid = true;
                 _activeVoidCollider = collision.collider;
-
-                if (_dash != null && _dash.IsDashing && _graceTimer <= 0f)
-                {
-                    StartFallSequence();
-                }
             }
         }
 
