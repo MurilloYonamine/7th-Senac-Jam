@@ -2,6 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using Seventh.Core.Services;
 using Seventh.Gameplay.Player;
+using AudioSettings = Seventh.Core.Services.AudioSettings;
 
 namespace Seventh.Gameplay.Items
 {
@@ -19,6 +20,7 @@ namespace Seventh.Gameplay.Items
 
         [Header("Audio")]
         [SerializeField] private AudioClip _unlockSFX;
+        [Range(0f, 1f)][SerializeField] private float _unlockSFXVolume = 1f;
 
         private Collider2D _collider;
         private bool _isLocked = true;
@@ -26,7 +28,42 @@ namespace Seventh.Gameplay.Items
         private void Awake()
         {
             _collider = GetComponent<Collider2D>();
-            _collider.isTrigger = true;
+            if (_collider != null)
+            {
+                _collider.isTrigger = false;
+            }
+        }
+
+        private void OnEnable()
+        {
+            Key.OnKeyStatusChanged += HandleKeyStatusChanged;
+        }
+
+        private void OnDisable()
+        {
+            Key.OnKeyStatusChanged -= HandleKeyStatusChanged;
+        }
+
+        private void Start()
+        {
+            var player = FindAnyObjectByType<PlayerController>();
+            if (player != null)
+            {
+                HandleKeyStatusChanged(player.transform);
+            }
+        }
+
+        private void HandleKeyStatusChanged(Transform playerTransform)
+        {
+            if (!_isLocked || _collider == null || playerTransform == null) return;
+
+            var carriedKey = Key.GetCarriedKey(playerTransform);
+            bool hasKey = carriedKey != null;
+
+            if (_collider.isTrigger != hasKey)
+            {
+                _collider.isTrigger = hasKey;
+            }
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -69,7 +106,7 @@ namespace Seventh.Gameplay.Items
             var audioService = ServiceLocator.Get<IAudioService>();
             if (audioService != null && _unlockSFX != null)
             {
-                audioService.PlaySFX(_unlockSFX);
+                audioService.PlaySFX(_unlockSFX, new AudioSettings(volumeOffset: _unlockSFXVolume - 1f));
             }
 
             if (_doorObject != null)

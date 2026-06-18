@@ -12,6 +12,7 @@ namespace Seventh.Gameplay.Items
     {
         // Static registry to easily locate keys carried by a player
         private static readonly List<Key> ActiveKeys = new List<Key>();
+        public static event System.Action<Transform> OnKeyStatusChanged;
 
         [Header("Follow Settings")]
         [SerializeField] private float _followSmoothTime = 0.25f;
@@ -107,6 +108,8 @@ namespace Seventh.Gameplay.Items
             {
                 _audioService.PlaySFX(_pickupSFX, new Core.Services.AudioSettings { VolumeOffset = _pickupVolume });
             }
+
+            OnKeyStatusChanged?.Invoke(playerTransform);
         }
 
         private void LateUpdate()
@@ -183,6 +186,8 @@ namespace Seventh.Gameplay.Items
             if (_isConsumed) return;
             _isConsumed = true;
 
+            Transform player = _target;
+
             Sequence consumeSequence = DOTween.Sequence();
             
             consumeSequence.Join(transform.DOMove(destination, _consumeDuration).SetEase(Ease.OutQuad));
@@ -192,6 +197,7 @@ namespace Seventh.Gameplay.Items
             consumeSequence.OnComplete(() =>
             {
                 onComplete?.Invoke();
+                OnKeyStatusChanged?.Invoke(player);
                 Destroy(gameObject);
             });
         }
