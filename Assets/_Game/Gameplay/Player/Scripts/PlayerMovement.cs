@@ -6,6 +6,7 @@ using UnityEngine.VFX;
 
 namespace Seventh.Gameplay.Player
 {
+    [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerMovement : MonoBehaviour
     {
         private IInputService _inputService;
@@ -66,14 +67,7 @@ namespace Seventh.Gameplay.Player
 
         private void FixedUpdate()
         {
-            if (_rb != null)
-            {
-#if UNITY_6000_0_OR_NEWER
-                _rb.linearVelocity = Vector2.zero;
-#else
-                _rb.velocity = Vector2.zero;
-#endif
-            }
+            _rb.linearVelocity = _movementInput * _moveSpeed;
         }
 
         private void Update()
@@ -108,9 +102,6 @@ namespace Seventh.Gameplay.Player
             {
                 FacingDirection = _movementInput.normalized;
             }
-
-            Vector3 movement = new Vector3(_movementInput.x, _movementInput.y) * _moveSpeed * Time.deltaTime;
-            transform.position += movement;
 
             _animator.UpdateMovementAnimation(_movementInput);
             UpdateMoveDustVFX();
