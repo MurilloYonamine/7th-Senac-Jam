@@ -5,6 +5,7 @@ using Seventh.Core.Events;
 using Seventh.Core.Services;
 using AudioSettings = Seventh.Core.Services.AudioSettings;
 using Seventh.Gameplay.Health;
+using Seventh.Core.Constants;
 
 namespace Seventh.Gameplay.Player
 {
@@ -78,12 +79,14 @@ namespace Seventh.Gameplay.Player
             }
 
             _eventBus?.Subscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
             _poisonCoroutine = StartCoroutine(PoisonRoutine());
         }
 
         private void OnDestroy()
         {
             _eventBus?.Unsubscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
 
             if (_poisonCoroutine != null)
             {
@@ -109,12 +112,25 @@ namespace Seventh.Gameplay.Player
             _eventBus?.Publish(new PlayerHealthChangedEvent(CurrentHealth, MaxHealth));
         }
 
+        private void OnGameStateChanged(GameStateChangedEvent evt)
+        {
+            UpdateLowHealthWarning();
+        }
+
         private IEnumerator PoisonRoutine()
         {
             var wait = new WaitForSeconds(_poisonInterval);
             while (true)
             {
                 yield return wait;
+
+                // Stop poison if currently in a cutscene
+                if (ServiceLocator.TryGet<IGameStateService>(out var gameStateService) &&
+                    gameStateService.CurrentGameState == GameState.Cutscene)
+                {
+                    continue;
+                }
+
                 if (CurrentHealth > 0)
                 {
                     TakeDamage(new DamageInfo(_poisonDamage, 0f, Vector2.zero, null, HitIntensity.Light, isSilent: true));
@@ -212,9 +228,27 @@ namespace Seventh.Gameplay.Player
         {
             if (_audioService == null || _lowHealthWarningSFX == null) return;
 
+            // Check if game is in a cutscene
+            bool isInCutscene = false;
+            if (ServiceLocator.TryGet<IGameStateService>(out var gameStateService))
+            {
+                isInCutscene = gameStateService.CurrentGameState == GameState.Cutscene;
+            }
+
             float healthPercentage = MaxHealth > 0 ? (float)CurrentHealth / MaxHealth : 1f;
 
-            if (CurrentHealth > 0 && healthPercentage <= _lowHealthWarningThreshold)
+            // Stop heartbeat warning if dead OR in cutscene
+            if (CurrentHealth <= 0 || isInCutscene)
+            {
+                if (_isLowHealthWarningPlaying)
+                {
+                    _isLowHealthWarningPlaying = false;
+                    _audioService.StopSFX(_lowHealthWarningSFX);
+                }
+                return;
+            }
+
+            if (healthPercentage <= _lowHealthWarningThreshold)
             {
                 if (!_isLowHealthWarningPlaying)
                 {
@@ -286,6 +320,9 @@ namespace Seventh.Gameplay.Player
             }
             _poisonCoroutine = StartCoroutine(PoisonRoutine());
             UpdateLowHealthWarning();
+
+            // Reactivate and reset all enemies
+            Seventh.Gameplay.Enemies.Enemy.ReactivateAllEnemies();
         }
     }
 }

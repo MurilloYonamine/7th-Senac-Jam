@@ -119,6 +119,7 @@ namespace Seventh.View.Menu
         private void OnPlayClicked()
         {
             PlayClickSound();
+            Seventh.Gameplay.Environment.HideAfterDeaths.ResetSessionDeaths();
             if (_cutscene != null)
             {
                 _cutscene._onCutsceneEnd.RemoveListener(OnCutsceneFinished);
