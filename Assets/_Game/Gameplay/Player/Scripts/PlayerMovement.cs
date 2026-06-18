@@ -37,6 +37,9 @@ namespace Seventh.Gameplay.Player
 
         public Transform VisualModel => _visualModel;
 
+        private IGameStateService _gameStateService;
+        private PlayerDash _dash;
+        private Rigidbody2D _rb;
         private Vector3 _initialLocalPosition;
         private Vector3 _initialLocalScale;
         private Sequence _walkSequence;
@@ -47,6 +50,9 @@ namespace Seventh.Gameplay.Player
             _inputService = ServiceLocator.Get<IInputService>();
             _audioService = ServiceLocator.Get<IAudioService>();
             _animator = GetComponent<PlayerAnimator>();
+            _gameStateService = ServiceLocator.Get<IGameStateService>();
+            _dash = GetComponent<PlayerDash>();
+            _rb = GetComponent<Rigidbody2D>();
         }
 
         private void Start()
@@ -58,9 +64,34 @@ namespace Seventh.Gameplay.Player
             }
         }
 
+        private void FixedUpdate()
+        {
+            if (_rb != null)
+            {
+#if UNITY_6000_0_OR_NEWER
+                _rb.linearVelocity = Vector2.zero;
+#else
+                _rb.velocity = Vector2.zero;
+#endif
+            }
+        }
+
         private void Update()
         {
-            Move();
+            bool canMove = (_gameStateService == null || _gameStateService.CurrentGameState == Seventh.Core.Constants.GameState.Playing)
+                           && (_dash == null || !_dash.IsDashing);
+
+            if (canMove)
+            {
+                Move();
+            }
+            else
+            {
+                _movementInput = Vector2.zero;
+                _animator.UpdateMovementAnimation(_movementInput);
+                UpdateMoveDustVFX();
+            }
+
             UpdateWalkAnimationState();
         }
 

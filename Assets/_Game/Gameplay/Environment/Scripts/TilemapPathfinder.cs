@@ -50,6 +50,14 @@ namespace Seventh.Gameplay.Environment
             return true;
         }
 
+        public bool IsWorldPositionWalkable(Vector3 worldPosition, Collider2D roomCollider = null)
+        {
+            if (_floorTilemap == null && _wallsTilemap == null) return false;
+            Grid grid = _floorTilemap != null ? _floorTilemap.layoutGrid : _wallsTilemap.layoutGrid;
+            Vector3Int cell = grid.WorldToCell(worldPosition);
+            return IsWalkable(cell, roomCollider);
+        }
+
         public List<Vector3> FindPath(Vector3 startWorld, Vector3 targetWorld, Collider2D roomCollider = null)
         {
             if (_floorTilemap == null && _wallsTilemap == null)
@@ -62,14 +70,16 @@ namespace Seventh.Gameplay.Environment
             Vector3Int startCell = grid.WorldToCell(startWorld);
             Vector3Int targetCell = grid.WorldToCell(targetWorld);
 
+            Vector3 finalTargetWorld = targetWorld;
             if (!IsWalkable(targetCell, roomCollider))
             {
                 targetCell = FindClosestWalkableNeighbor(targetCell, roomCollider);
+                finalTargetWorld = grid.GetCellCenterWorld(targetCell);
             }
 
             if (startCell == targetCell)
             {
-                return new List<Vector3> { targetWorld };
+                return new List<Vector3> { finalTargetWorld };
             }
 
             var openList = new List<PathNode>();
@@ -90,7 +100,7 @@ namespace Seventh.Gameplay.Environment
 
                 if (currentNode.Position == targetCell)
                 {
-                    return RetracePath(currentNode, grid, targetWorld);
+                    return RetracePath(currentNode, grid, finalTargetWorld);
                 }
 
                 openList.Remove(currentNode);
@@ -129,7 +139,7 @@ namespace Seventh.Gameplay.Environment
                 }
             }
 
-            return new List<Vector3> { targetWorld };
+            return new List<Vector3> { finalTargetWorld };
         }
 
         private Vector3Int FindClosestWalkableNeighbor(Vector3Int cell, Collider2D roomCollider = null)
@@ -267,6 +277,37 @@ namespace Seventh.Gameplay.Environment
             {
                 Position = position;
             }
+        }
+
+        public Vector3 FindBestFleePosition(Vector3 startWorld, Vector3 playerWorld, float searchRadius, Collider2D roomCollider = null)
+        {
+            if (_floorTilemap == null && _wallsTilemap == null) return startWorld;
+            Grid grid = _floorTilemap != null ? _floorTilemap.layoutGrid : _wallsTilemap.layoutGrid;
+            Vector3Int startCell = grid.WorldToCell(startWorld);
+            
+            Vector3 bestWorldPos = startWorld;
+            float maxDistance = Vector3.Distance(startWorld, playerWorld);
+            int radius = Mathf.CeilToInt(searchRadius);
+
+            for (int x = -radius; x <= radius; x++)
+            {
+                for (int y = -radius; y <= radius; y++)
+                {
+                    Vector3Int testCell = new Vector3Int(startCell.x + x, startCell.y + y, 0);
+                    if (IsWalkable(testCell, roomCollider))
+                    {
+                        Vector3 testWorldPos = grid.GetCellCenterWorld(testCell);
+                        float distToPlayer = Vector3.Distance(testWorldPos, playerWorld);
+                        if (distToPlayer > maxDistance)
+                        {
+                            maxDistance = distToPlayer;
+                            bestWorldPos = testWorldPos;
+                        }
+                    }
+                }
+            }
+
+            return bestWorldPos;
         }
     }
 }

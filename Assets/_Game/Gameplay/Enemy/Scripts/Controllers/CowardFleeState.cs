@@ -48,9 +48,11 @@ namespace Seventh.Gameplay.Enemy
 
                 if (pathfinder != null)
                 {
-                    Vector3 targetPosition = _controller.transform.position + (Vector3)(fleeDirection * _controller.SafeDistance);
                     Collider2D roomCollider = _controller.MyRoom != null ? _controller.MyRoom.RoomCollider : null;
+                    Vector3 targetPosition = pathfinder.FindBestFleePosition(_controller.transform.position, _controller.PlayerTransform.position, _controller.SafeDistance, roomCollider);
                     var path = pathfinder.FindPath(_controller.transform.position, targetPosition, roomCollider);
+
+                    _controller.SetDebugPath(path, targetPosition);
 
                     if (path != null && path.Count > 0)
                     {
