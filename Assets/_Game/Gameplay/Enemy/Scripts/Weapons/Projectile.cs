@@ -24,6 +24,12 @@ namespace Seventh.Gameplay.Enemy
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
+            // Ignore collision with any enemy
+            if (collision.GetComponentInParent<Enemies.Enemy>() != null)
+            {
+                return;
+            }
+
             if (collision.TryGetComponent(out IDamageable damageable))
             {
                 DamageInfo damageInfo = new DamageInfo(

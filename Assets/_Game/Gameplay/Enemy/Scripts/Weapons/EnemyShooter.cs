@@ -67,6 +67,14 @@ namespace Seventh.Gameplay.Enemy
             if (_firePoint == null || _projectilePrefab == null) yield break;
 
             _isShootingSequence = true;
+
+            // Dynamically locate the WeaponPivot from the controller for the aim direction
+            Transform aimTransform = _firePoint;
+            var controller = GetComponentInParent<CowardEnemyController>();
+            if (controller != null && controller.WeaponPivot != null)
+            {
+                aimTransform = controller.WeaponPivot;
+            }
             
             // Phase 1: Show warning laser
             if (_lineRenderer != null)
@@ -77,7 +85,7 @@ namespace Seventh.Gameplay.Enemy
                 {
                     if (_firePoint == null) break;
                     Vector2 origin = _firePoint.position;
-                    Vector2 direction = _firePoint.right;
+                    Vector2 direction = aimTransform.right;
                     RaycastHit2D hit = Physics2D.Raycast(origin, direction, _maxLaserDistance, _laserMask);
                     Vector3 endPosition = (hit.collider != null) ? (Vector3)hit.point : (Vector3)(origin + direction * _maxLaserDistance);
 
@@ -100,19 +108,19 @@ namespace Seventh.Gameplay.Enemy
             // Phase 2: Fire physical projectile
             if (_firePoint != null)
             {
-                Instantiate(_projectilePrefab, _firePoint.position, _firePoint.rotation);
-                ApplyRecoil();
+                Instantiate(_projectilePrefab, _firePoint.position, aimTransform.rotation);
+                ApplyRecoil(aimTransform);
             }
 
             _isShootingSequence = false;
         }
 
-        private void ApplyRecoil()
+        private void ApplyRecoil(Transform aimTransform)
         {
-            if (_enemyModelTransform == null) return;
+            if (_enemyModelTransform == null || aimTransform == null) return;
 
             _enemyModelTransform.DOKill(true);
-            Vector3 recoilPunch = -_firePoint.right * _recoilDistance;
+            Vector3 recoilPunch = -aimTransform.right * _recoilDistance;
             _enemyModelTransform.DOPunchPosition(recoilPunch, _recoilDuration, vibrato: 1, elasticity: 0.5f);
         }
     }

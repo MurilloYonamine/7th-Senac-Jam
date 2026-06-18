@@ -6,6 +6,15 @@ using Seventh.Gameplay.Enemies;
 
 namespace Seventh.Gameplay.Enemy
 {
+    public enum ShootAimMode
+    {
+        TrackPlayer,
+        FixedUp,
+        FixedDown,
+        FixedLeft,
+        FixedRight
+    }
+
     [RequireComponent(typeof(EnemyHopMovement))]
     [RequireComponent(typeof(Seventh.Gameplay.Enemies.Enemy))]
     public class CowardEnemyController : MonoBehaviour
@@ -15,6 +24,8 @@ namespace Seventh.Gameplay.Enemy
         [SerializeField] private float _safeDistance = 7f; 
         
         [Header("Shooting")]
+        [SerializeField] private bool _canShoot = true;
+        [SerializeField] private ShootAimMode _aimMode = ShootAimMode.TrackPlayer;
         [SerializeField] private Transform _weaponPivot;
         [SerializeField] private float _shootCooldown = 2f;
         [Tooltip("Delay in seconds when it stops to shoot before fleeing again")]
@@ -24,10 +35,13 @@ namespace Seventh.Gameplay.Enemy
         private Transform _playerTransform;
         private EnemyHopMovement _hopMovement;
         private RoomTrigger _myRoom;
+        private Enemies.Enemy _enemy;
 
         private Vector3 _debugTargetPosition;
         private System.Collections.Generic.List<Vector3> _debugPath;
 
+        public bool CanShoot => _canShoot;
+        public ShootAimMode AimMode => _aimMode;
         public float MoveSpeed => _moveSpeed;
         public float SafeDistance => _safeDistance;
         public float ShootCooldown => _shootCooldown;
@@ -37,14 +51,90 @@ namespace Seventh.Gameplay.Enemy
         public EnemyHopMovement HopMovement => _hopMovement;
         public RoomTrigger MyRoom => _myRoom;
 
+        private Vector3 _originalWeaponPivotLocalPos;
+
         private void Awake()
         {
             _hopMovement = GetComponent<EnemyHopMovement>();
+            _enemy = GetComponent<Enemies.Enemy>();
             _stateMachine = new EnemyStateMachine();
+        }
+
+        public void ResetControllerState()
+        {
+            _stateMachine = new EnemyStateMachine();
+            _stateMachine.ChangeState(new CowardFleeState(this, _stateMachine));
+            if (_hopMovement != null)
+            {
+                _hopMovement.Stop();
+            }
+        }
+
+        public void SetAimDirection(Vector2 aimDirection)
+        {
+            if (_enemy != null)
+            {
+                _enemy.UpdateAnimatorParameters(aimDirection);
+            }
+
+            if (_weaponPivot != null)
+            {
+                _weaponPivot.right = aimDirection;
+
+                Vector3 localPos = _originalWeaponPivotLocalPos;
+                if (aimDirection.x < -0.01f)
+                {
+                    localPos.x = -Mathf.Abs(_originalWeaponPivotLocalPos.x);
+                }
+                else if (aimDirection.x > 0.01f)
+                {
+                    localPos.x = Mathf.Abs(_originalWeaponPivotLocalPos.x);
+                }
+                _weaponPivot.localPosition = localPos;
+            }
+        }
+
+        public void AimWeapon(Vector2 toPlayer)
+        {
+            Vector2 aimDirection;
+
+            switch (_aimMode)
+            {
+                case ShootAimMode.FixedUp:
+                    aimDirection = Vector2.up;
+                    break;
+                case ShootAimMode.FixedDown:
+                    aimDirection = Vector2.down;
+                    break;
+                case ShootAimMode.FixedLeft:
+                    aimDirection = Vector2.left;
+                    break;
+                case ShootAimMode.FixedRight:
+                    aimDirection = Vector2.right;
+                    break;
+                case ShootAimMode.TrackPlayer:
+                default:
+                    if (Mathf.Abs(toPlayer.x) > Mathf.Abs(toPlayer.y))
+                    {
+                        aimDirection = toPlayer.x > 0 ? Vector2.right : Vector2.left;
+                    }
+                    else
+                    {
+                        aimDirection = toPlayer.y > 0 ? Vector2.up : Vector2.down;
+                    }
+                    break;
+            }
+
+            SetAimDirection(aimDirection);
         }
 
         private void Start()
         {
+            if (_weaponPivot != null)
+            {
+                _originalWeaponPivotLocalPos = _weaponPivot.localPosition;
+            }
+
             var player = FindAnyObjectByType<PlayerController>();
             if (player != null)
             {
@@ -71,6 +161,10 @@ namespace Seventh.Gameplay.Enemy
 
         public void TriggerShoot()
         {
+            if (_enemy != null && _enemy.Animator != null)
+            {
+                _enemy.Animator.SetTrigger("Attack");
+            }
             SendMessage("Shoot", SendMessageOptions.DontRequireReceiver);
         }
 
