@@ -1,4 +1,6 @@
 using UnityEngine;
+using Seventh.Core.Services;
+using Seventh.Gameplay.Environment;
 
 namespace Seventh.Gameplay.Enemy
 {
@@ -23,6 +25,14 @@ namespace Seventh.Gameplay.Enemy
         {
             if (_controller.PlayerTransform == null) return;
 
+            // If the enemy is currently stunned (recovering from hit), stop movement and wait
+            var enemyComponent = _controller.GetComponent<Seventh.Gameplay.Enemies.Enemy>();
+            if (enemyComponent != null && enemyComponent.IsStunned)
+            {
+                _controller.HopMovement.Stop();
+                return;
+            }
+
             _timeSinceLastShot += Time.deltaTime;
 
             Vector2 toPlayer = _controller.PlayerTransform.position - _controller.transform.position;
@@ -34,7 +44,38 @@ namespace Seventh.Gameplay.Enemy
             if (distance < _controller.SafeDistance)
             {
                 Vector2 fleeDirection = -toPlayer.normalized;
-                _controller.HopMovement.Move(fleeDirection);
+                var pathfinder = ServiceLocator.Get<ITilemapPathfinder>();
+
+                if (pathfinder != null)
+                {
+                    Collider2D roomCollider = _controller.MyRoom != null ? _controller.MyRoom.RoomCollider : null;
+                    Vector3 targetPosition = pathfinder.FindBestFleePosition(_controller.transform.position, _controller.PlayerTransform.position, _controller.SafeDistance, roomCollider);
+                    var path = pathfinder.FindPath(_controller.transform.position, targetPosition, roomCollider);
+
+                    _controller.SetDebugPath(path, targetPosition);
+
+                    if (path != null && path.Count > 0)
+                    {
+                        Vector3 nextNode = path.Count > 1 ? path[1] : path[0];
+                        
+                        // If we are already very close to the first node, pick the next one to maintain smooth flow
+                        if (Vector3.Distance(_controller.transform.position, nextNode) < 0.2f && path.Count > 2)
+                        {
+                            nextNode = path[2];
+                        }
+
+                        Vector2 nextStepDir = (nextNode - _controller.transform.position).normalized;
+                        _controller.HopMovement.Move(nextStepDir);
+                    }
+                    else
+                    {
+                        _controller.HopMovement.Move(fleeDirection);
+                    }
+                }
+                else
+                {
+                    _controller.HopMovement.Move(fleeDirection);
+                }
             }
             else
             {

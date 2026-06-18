@@ -11,6 +11,7 @@ namespace Seventh.Gameplay.Player
     [RequireComponent(typeof(PlayerDash))]
     [RequireComponent(typeof(PlayerAttack))]
     [RequireComponent(typeof(PlayerHealth))]
+    [RequireComponent(typeof(PlayerVoidFall))]
     public class PlayerController : MonoBehaviour
     {
         private PlayerMovement _movement;

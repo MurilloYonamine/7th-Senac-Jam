@@ -10,9 +10,11 @@ namespace Seventh.Gameplay.Player
 {
     public class PlayerDash : MonoBehaviour
     {
+        [Header("References")]
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+
         private IInputService _inputService;
         private IAudioService _audioService;
-        private SpriteRenderer _spriteRenderer;
         private CinemachineImpulseSource _impulseSource;
         private Coroutine _flashCoroutine;
         private Material _originalMaterial;
@@ -22,6 +24,8 @@ namespace Seventh.Gameplay.Player
         [SerializeField] private float _dashDistance = 5;
         [SerializeField] private float _dashDuration = 0.2f;
         [SerializeField] private float _dashCooldown = 1f;
+        [SerializeField] private LayerMask _dashObstacleLayers;
+        [SerializeField] private float _dashSkinWidth = 0.2f;
 
         [Header("Audio Settings")]
         [SerializeField] private AudioClip _dashSFX;
@@ -40,7 +44,12 @@ namespace Seventh.Gameplay.Player
         {
             _inputService = ServiceLocator.Get<IInputService>();
             _audioService = ServiceLocator.Get<IAudioService>();
-            _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
+            if (_spriteRenderer == null)
+            {
+                _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+            
             _impulseSource = GetComponent<CinemachineImpulseSource>();
             if (_spriteRenderer != null)
             {
@@ -100,7 +109,19 @@ namespace Seventh.Gameplay.Player
 
         private void ExecuteDashMovement(Vector3 direction)
         {
-            Vector3 targetPosition = transform.position + (direction * _dashDistance);
+            float targetDistance = _dashDistance;
+
+            if (TryGetComponent<Collider2D>(out var col))
+            {
+                Vector2 boxSize = col.bounds.size;
+                RaycastHit2D hit = Physics2D.BoxCast(transform.position, boxSize, 0f, direction, _dashDistance, _dashObstacleLayers);
+                if (hit.collider != null)
+                {
+                    targetDistance = Mathf.Max(0f, hit.distance - _dashSkinWidth);
+                }
+            }
+
+            Vector3 targetPosition = transform.position + (direction * targetDistance);
             
             IsDashing = true;
             transform.DOMove(targetPosition, _dashDuration)
@@ -108,8 +129,37 @@ namespace Seventh.Gameplay.Player
                 .OnComplete(() => 
                 {
                     IsDashing = false;
-                    _spriteRenderer.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutElastic);
+                    if (_spriteRenderer != null)
+                    {
+                        _spriteRenderer.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutElastic);
+                    }
                 });
+        }
+
+        public void CancelDash()
+        {
+            if (!IsDashing) return;
+            IsDashing = false;
+            transform.DOKill();
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.transform.DOKill();
+                _spriteRenderer.transform.localScale = Vector3.one;
+                if (_originalMaterial != null)
+                {
+                    _spriteRenderer.material = _originalMaterial;
+                }
+            }
+            if (_flashCoroutine != null)
+            {
+                StopCoroutine(_flashCoroutine);
+                _flashCoroutine = null;
+            }
+            if (_currentFlashMaterial != null)
+            {
+                Destroy(_currentFlashMaterial);
+                _currentFlashMaterial = null;
+            }
         }
 
         private void ApplyDashEffects(Vector3 direction)
@@ -204,7 +254,9 @@ namespace Seventh.Gameplay.Player
                     transform.rotation,
                     _spriteRenderer.transform.localScale,
                     _ghostColor,
-                    _ghostFadeDuration
+                    _ghostFadeDuration,
+                    _spriteRenderer.sortingOrder - 1,
+                    _spriteRenderer.sortingLayerName
                 );
 
                 yield return new WaitForSeconds(_ghostDelay);

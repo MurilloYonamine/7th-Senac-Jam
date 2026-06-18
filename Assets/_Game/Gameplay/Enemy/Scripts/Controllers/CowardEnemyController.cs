@@ -1,10 +1,13 @@
 using UnityEngine;
 using Seventh.Gameplay.Player;
 using Seventh.Core.Services;
+using Seventh.Gameplay.Environment;
+using Seventh.Gameplay.Enemies;
 
 namespace Seventh.Gameplay.Enemy
 {
     [RequireComponent(typeof(EnemyHopMovement))]
+    [RequireComponent(typeof(Seventh.Gameplay.Enemies.Enemy))]
     public class CowardEnemyController : MonoBehaviour
     {
         [Header("Movement")]
@@ -20,6 +23,10 @@ namespace Seventh.Gameplay.Enemy
         private EnemyStateMachine _stateMachine;
         private Transform _playerTransform;
         private EnemyHopMovement _hopMovement;
+        private RoomTrigger _myRoom;
+
+        private Vector3 _debugTargetPosition;
+        private System.Collections.Generic.List<Vector3> _debugPath;
 
         public float MoveSpeed => _moveSpeed;
         public float SafeDistance => _safeDistance;
@@ -28,6 +35,7 @@ namespace Seventh.Gameplay.Enemy
         public Transform WeaponPivot => _weaponPivot;
         public Transform PlayerTransform => _playerTransform;
         public EnemyHopMovement HopMovement => _hopMovement;
+        public RoomTrigger MyRoom => _myRoom;
 
         private void Awake()
         {
@@ -43,6 +51,16 @@ namespace Seventh.Gameplay.Enemy
                 _playerTransform = player.transform;
             }
 
+            // Detect which room this enemy spawned in
+            foreach (var room in FindObjectsByType<RoomTrigger>(FindObjectsInactive.Exclude))
+            {
+                if (room.RoomCollider != null && room.RoomCollider.OverlapPoint(transform.position))
+                {
+                    _myRoom = room;
+                    break;
+                }
+            }
+
             _stateMachine.ChangeState(new CowardFleeState(this, _stateMachine));
         }
 
@@ -54,6 +72,33 @@ namespace Seventh.Gameplay.Enemy
         public void TriggerShoot()
         {
             SendMessage("Shoot", SendMessageOptions.DontRequireReceiver);
+        }
+
+        public void SetDebugPath(System.Collections.Generic.List<Vector3> path, Vector3 targetPosition)
+        {
+            _debugPath = path;
+            _debugTargetPosition = targetPosition;
+        }
+
+        private void OnDrawGizmos()
+        {
+            // Draw Target Position in Red
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(_debugTargetPosition, 0.3f);
+
+            // Draw Path in Yellow
+            if (_debugPath != null && _debugPath.Count > 0)
+            {
+                Gizmos.color = Color.yellow;
+                for (int i = 0; i < _debugPath.Count - 1; i++)
+                {
+                    Gizmos.DrawLine(_debugPath[i], _debugPath[i + 1]);
+                }
+                foreach (var node in _debugPath)
+                {
+                    Gizmos.DrawWireCube(node, Vector3.one * 0.2f);
+                }
+            }
         }
     }
 }
