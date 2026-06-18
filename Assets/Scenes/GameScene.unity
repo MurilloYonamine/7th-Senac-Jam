@@ -284,7 +284,6 @@ GameObject:
   - component: {fileID: 39826426}
   - component: {fileID: 39826428}
   - component: {fileID: 39826427}
-  - component: {fileID: 39826429}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -368,18 +367,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &39826429
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 39826425}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!1 &62515739
 GameObject:
   m_ObjectHideFlags: 0
@@ -683,7 +670,6 @@ GameObject:
   - component: {fileID: 122337567}
   - component: {fileID: 122337569}
   - component: {fileID: 122337568}
-  - component: {fileID: 122337570}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -767,18 +753,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &122337570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 122337566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!1 &153237160
 GameObject:
   m_ObjectHideFlags: 0
@@ -1375,7 +1349,6 @@ GameObject:
   - component: {fileID: 368911540}
   - component: {fileID: 368911542}
   - component: {fileID: 368911541}
-  - component: {fileID: 368911543}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -1459,18 +1432,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &368911543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 368911539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!1 &441432045
 GameObject:
   m_ObjectHideFlags: 0
@@ -1482,7 +1443,6 @@ GameObject:
   - component: {fileID: 441432046}
   - component: {fileID: 441432048}
   - component: {fileID: 441432047}
-  - component: {fileID: 441432049}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -1566,18 +1526,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &441432049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 441432045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!1 &457833810
 GameObject:
   m_ObjectHideFlags: 0
@@ -23900,7 +23848,6 @@ GameObject:
   - component: {fileID: 638051188}
   - component: {fileID: 638051190}
   - component: {fileID: 638051189}
-  - component: {fileID: 638051191}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -23984,18 +23931,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &638051191
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 638051187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!4 &667586767 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6443982996768051400, guid: 4e14905d59bdc7a43907e242a9c316d5, type: 3}
@@ -24112,7 +24047,6 @@ GameObject:
   - component: {fileID: 709136178}
   - component: {fileID: 709136180}
   - component: {fileID: 709136179}
-  - component: {fileID: 709136181}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -24196,18 +24130,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &709136181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 709136177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!1 &727479274
 GameObject:
   m_ObjectHideFlags: 0
@@ -26811,7 +26733,6 @@ GameObject:
   - component: {fileID: 1236858579}
   - component: {fileID: 1236858581}
   - component: {fileID: 1236858580}
-  - component: {fileID: 1236858582}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -26895,18 +26816,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &1236858582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1236858578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!1 &1251019838
 GameObject:
   m_ObjectHideFlags: 0
@@ -66750,7 +66659,6 @@ GameObject:
   - component: {fileID: 1505648267}
   - component: {fileID: 1505648269}
   - component: {fileID: 1505648268}
-  - component: {fileID: 1505648270}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -66834,18 +66742,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &1505648270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1505648266}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!1 &1511728926
 GameObject:
   m_ObjectHideFlags: 0
@@ -66871,12 +66767,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1511728926}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1537085479}
+  m_Father: {fileID: 1760576878}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -66897,7 +66793,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -67102,7 +66998,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1511728927}
+  - {fileID: 1997790098}
   m_Father: {fileID: 1318191090}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -67177,7 +67073,6 @@ GameObject:
   - component: {fileID: 1595278554}
   - component: {fileID: 1595278556}
   - component: {fileID: 1595278555}
-  - component: {fileID: 1595278557}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -67261,18 +67156,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &1595278557
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1595278553}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!1 &1610331999
 GameObject:
   m_ObjectHideFlags: 0
@@ -67664,7 +67547,6 @@ GameObject:
   - component: {fileID: 1754689174}
   - component: {fileID: 1754689176}
   - component: {fileID: 1754689175}
-  - component: {fileID: 1754689177}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -67748,18 +67630,111 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &1754689177
+--- !u!1 &1760576877
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1760576878}
+  - component: {fileID: 1760576880}
+  - component: {fileID: 1760576879}
+  - component: {fileID: 1760576881}
+  - component: {fileID: 1760576882}
+  m_Layer: 0
+  m_Name: MaskArea
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1760576878
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760576877}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1511728927}
+  m_Father: {fileID: 1997790098}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 280, y: 280}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1760576879
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754689173}
+  m_GameObject: {fileID: 1760576877}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1760576880
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760576877}
+  m_CullTransparentMesh: 1
+--- !u!114 &1760576881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760576877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Mask
+  m_ShowMaskGraphic: 0
+--- !u!114 &1760576882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760576877}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RectMask2D
+  m_Padding: {x: 0, y: 0, z: 0, w: 0}
+  m_Softness: {x: 0, y: 0}
 --- !u!1 &1781184129
 GameObject:
   m_ObjectHideFlags: 0
@@ -67771,7 +67746,6 @@ GameObject:
   - component: {fileID: 1781184130}
   - component: {fileID: 1781184132}
   - component: {fileID: 1781184131}
-  - component: {fileID: 1781184133}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -67855,18 +67829,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &1781184133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1781184129}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!1 &1799088360
 GameObject:
   m_ObjectHideFlags: 0
@@ -67894,7 +67856,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1979898300}
@@ -67969,7 +67931,6 @@ GameObject:
   - component: {fileID: 1964000165}
   - component: {fileID: 1964000167}
   - component: {fileID: 1964000166}
-  - component: {fileID: 1964000168}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -68053,18 +68014,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &1964000168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1964000164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!4 &1979898300 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6196389166926645091, guid: d62d5057d284c394ab874df9cc6dc3bb, type: 3}
@@ -68080,7 +68029,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1989542562}
   - component: {fileID: 1989542565}
-  - component: {fileID: 1989542564}
   - component: {fileID: 1989542563}
   - component: {fileID: 1989542566}
   m_Layer: 0
@@ -68149,14 +68097,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!81 &1989542564
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1989542561}
-  m_Enabled: 1
 --- !u!20 &1989542565
 Camera:
   m_ObjectHideFlags: 0
@@ -68192,7 +68132,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 53
+  orthographic size: 16
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -68326,6 +68266,82 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &1997790097
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1997790098}
+  - component: {fileID: 1997790100}
+  - component: {fileID: 1997790099}
+  m_Layer: 0
+  m_Name: Moldura
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1997790098
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997790097}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1760576878}
+  m_Father: {fileID: 1537085479}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 300, y: 300}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1997790099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997790097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1997790100
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1997790097}
+  m_CullTransparentMesh: 1
 --- !u!1 &2029451688
 GameObject:
   m_ObjectHideFlags: 0
@@ -68393,7 +68409,6 @@ GameObject:
   - component: {fileID: 2061292159}
   - component: {fileID: 2061292161}
   - component: {fileID: 2061292160}
-  - component: {fileID: 2061292162}
   m_Layer: 0
   m_Name: Room Trigger
   m_TagString: Untagged
@@ -68477,18 +68492,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 28, y: 16}
   m_EdgeRadius: 0
---- !u!114 &2061292162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2061292158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aae26481a1230249819d8eecf2d38ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Environment.RoomMinimapRevealer
 --- !u!1 &2097491343
 GameObject:
   m_ObjectHideFlags: 0
