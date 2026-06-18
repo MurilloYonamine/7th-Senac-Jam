@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using DG.Tweening;
 using Seventh.Core.Events;
 using Seventh.Core.Services;
 using AudioSettings = Seventh.Core.Services.AudioSettings;
@@ -29,9 +30,17 @@ namespace Seventh.Gameplay.Player
         [Range(0f, 1f)][SerializeField] private float _lowHealthWarningSFXVolume = 1f;
         [Range(0f, 1f)][SerializeField] private float _lowHealthWarningThreshold = 0.5f;
 
+        [Header("Juice Settings")]
+        [SerializeField] private float _flashDuration = 0.08f;
+        [SerializeField] private float _shakeDuration = 0.15f;
+        [SerializeField] private float _shakeStrength = 0.15f;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private Transform _visualModel;
+
         private IEventBus _eventBus;
         private IAudioService _audioService;
         private Coroutine _poisonCoroutine;
+        private Coroutine _flashCoroutine;
         private bool _isLowHealthWarningPlaying;
 
         protected override void Awake()
@@ -46,8 +55,16 @@ namespace Seventh.Gameplay.Player
             PublishHealth();
             UpdateLowHealthWarning();
 
-            _eventBus?.Subscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
+            if (_spriteRenderer == null)
+            {
+                _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+            if (_visualModel == null)
+            {
+                _visualModel = _spriteRenderer != null ? _spriteRenderer.transform : transform;
+            }
 
+            _eventBus?.Subscribe<EnemyDefeatedEvent>(OnEnemyDefeated);
             _poisonCoroutine = StartCoroutine(PoisonRoutine());
         }
 
@@ -61,9 +78,9 @@ namespace Seventh.Gameplay.Player
                 _poisonCoroutine = null;
             }
 
-            if (_isLowHealthWarningPlaying && _audioService != null && _lowHealthWarningSFX != null)
+            if (_spriteRenderer != null)
             {
-                _audioService.StopSFX(_lowHealthWarningSFX);
+                _spriteRenderer.color = Color.white;
             }
         }
 
@@ -118,6 +135,23 @@ namespace Seventh.Gameplay.Player
                 {
                     _audioService.PlaySFX(_hurtSFX, new AudioSettings(volumeOffset: _hurtSFXVolume - 1f));
                 }
+
+                // Apply Red Flash Effect
+                if (!damageInfo.IsSilent && _spriteRenderer != null)
+                {
+                    if (_flashCoroutine != null)
+                    {
+                        StopCoroutine(_flashCoroutine);
+                    }
+                    _flashCoroutine = StartCoroutine(RedFlashRoutine(_flashDuration));
+                }
+
+                // Apply Shake Effect
+                if (!damageInfo.IsSilent && _visualModel != null)
+                {
+                    _visualModel.DOKill();
+                    _visualModel.DOShakePosition(_shakeDuration, _shakeStrength, 15, 90f, false, true);
+                }
             }
         }
 
@@ -170,6 +204,20 @@ namespace Seventh.Gameplay.Player
                     _audioService.StopSFX(_lowHealthWarningSFX);
                 }
             }
+        }
+
+        private IEnumerator RedFlashRoutine(float duration)
+        {
+            if (_spriteRenderer == null) yield break;
+
+            _spriteRenderer.color = new Color(1f, 0.2f, 0.2f, 1f); // Red tint
+            yield return new WaitForSeconds(duration);
+
+            if (_spriteRenderer != null)
+            {
+                _spriteRenderer.color = Color.white; // Restore default
+            }
+            _flashCoroutine = null;
         }
     }
 }

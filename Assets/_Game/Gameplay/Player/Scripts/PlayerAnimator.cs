@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Seventh.Gameplay.Player
 {
-    [RequireComponent(typeof(Animator))]
     public class PlayerAnimator : MonoBehaviour
     {
         private Animator _animator;
@@ -21,7 +20,7 @@ namespace Seventh.Gameplay.Player
 
         private void Awake()
         {
-            _animator = GetComponent<Animator>();
+            _animator = GetComponentInChildren<Animator>();
         }
 
         private void Start()

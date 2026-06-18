@@ -24,7 +24,7 @@ namespace Seventh.Gameplay.Player
                 return;
             }
 
-            IDamageable damageable = other.GetComponent<IDamageable>();
+            IDamageable damageable = other.GetComponentInParent<IDamageable>();
             if (damageable != null)
             {
                 Vector2 pushDirection = transform.right;

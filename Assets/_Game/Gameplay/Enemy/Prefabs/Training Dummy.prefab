@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2172697394162606663}
   - component: {fileID: 2708048433179619088}
   - component: {fileID: 1724949902165975272}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 5351437029944430468}
   - component: {fileID: 7833606953934062417}
   - component: {fileID: 6707727942628466319}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -164,7 +164,7 @@ GameObject:
   - component: {fileID: 7179246818240169300}
   - component: {fileID: 372563036502602693}
   - component: {fileID: 8833302244388482612}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Training Dummy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -179,7 +179,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6249156823317813563}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.4, y: 1.7640854, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -326,10 +326,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 560e849a5c415b7439731819f0159ff7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Seventh.Gameplay::Seventh.Gameplay.Enemies.Dummy
-  _heavyKnockback: 0.6
+  _deathSFX: {fileID: 0}
+  _deathSFXVolume: 1
   _knockbackDuration: 0.12
   _flashDuration: 0.08
   _hitstopDuration: 0.07
+  _hitLightSFX: {fileID: 8300000, guid: 3b30ee1f176da704bb535572170ef7c6, type: 3}
+  _hitLightSFXVolume: 1
+  _hitMediumSFX: {fileID: 8300000, guid: 464e083d87cc0354887d1c4812935f1f, type: 3}
+  _hitMediumSFXVolume: 1
+  _hitHeavySFX: {fileID: 8300000, guid: 76766d6fbe1173f498891917ddfa912b, type: 3}
+  _hitHeavySFXVolume: 1
 --- !u!114 &8833302244388482612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,7 +363,7 @@ GameObject:
   - component: {fileID: 3078467291507057301}
   - component: {fileID: 1845144328254823510}
   - component: {fileID: 8749388042245684451}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Enemy Health View
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -475,7 +482,7 @@ GameObject:
   - component: {fileID: 5649063896579872857}
   - component: {fileID: 245128758630535583}
   - component: {fileID: 4930689551076097665}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Enemy Health Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -558,7 +565,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2264830248257543673}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}

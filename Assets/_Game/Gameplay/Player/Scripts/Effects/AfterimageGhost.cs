@@ -8,7 +8,7 @@ namespace Seventh.Gameplay.Player
     {
         private SpriteRenderer _spriteRenderer;
 
-        public void Init(Sprite playerSprite, Vector3 position, Quaternion rotation, Vector2 scale, Color color, float fadeDuration)
+        public void Init(Sprite playerSprite, Vector3 position, Quaternion rotation, Vector2 scale, Color color, float fadeDuration, int sortingOrder, string sortingLayerName)
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();
             
@@ -18,8 +18,8 @@ namespace Seventh.Gameplay.Player
             
             _spriteRenderer.sprite = playerSprite;
             _spriteRenderer.color = color;
-            
-            _spriteRenderer.sortingOrder = -1; 
+            _spriteRenderer.sortingOrder = sortingOrder;
+            _spriteRenderer.sortingLayerName = sortingLayerName;
 
             _spriteRenderer.DOFade(0f, fadeDuration)
                 .SetEase(Ease.Linear)

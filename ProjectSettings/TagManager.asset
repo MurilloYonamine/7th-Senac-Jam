@@ -3,17 +3,18 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Void
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Enemy
+  - Wall
+  - Minimap
   - 
   - 
   - 
@@ -40,6 +41,18 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Scenario
+    uniqueID: 1496413255
+    locked: 0
+  - name: Props
+    uniqueID: 2928611973
+    locked: 0
+  - name: Entities
+    uniqueID: 1015662297
+    locked: 0
+  - name: Effects
+    uniqueID: 911028587
     locked: 0
   - name: HUD
     uniqueID: 1341797903
