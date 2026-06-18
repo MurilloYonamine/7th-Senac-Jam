@@ -75,6 +75,17 @@ namespace Seventh.Gameplay.Environment
             }
         }
 
+        private void OnTriggerStay2D(Collider2D other)
+        {
+            if (other.CompareTag("Player") || other.GetComponent<PlayerController>() != null)
+            {
+                if (_roomCamera != null && _roomCamera.Priority != 10)
+                {
+                    ActivateRoom();
+                }
+            }
+        }
+
         public void ActivateRoom()
         {
             foreach (var room in AllRooms)
