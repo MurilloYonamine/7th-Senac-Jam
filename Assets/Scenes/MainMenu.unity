@@ -911,8 +911,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -300}
-  m_SizeDelta: {x: 1373.8, y: 246.5}
+  m_AnchoredPosition: {x: 0, y: -235}
+  m_SizeDelta: {x: 1150, y: 246.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1436092742
 MonoBehaviour:
@@ -934,7 +934,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: ef9972a9eb817a3468e1ccb731761e62, type: 2}
   m_sharedMaterial: {fileID: -7182436687243436402, guid: ef9972a9eb817a3468e1ccb731761e62, type: 2}
@@ -968,7 +968,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -1431,29 +1431,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: Seventh.View::Seventh.View.SlideshowCutscene
   _slides:
   - sprite: {fileID: 21300000, guid: 01885b98456feb14894a5abf82960690, type: 3}
-    dialogueText: 
+    dialogueText: O Miau vaga por uma aventura genial, Uma caverna se torna seu alvo
+      principal.
   - sprite: {fileID: 21300000, guid: 581d1270941af714eaa3c145a96e895c, type: 3}
-    dialogueText: 
+    dialogueText: Junto com uma planta de aspecto incomum,
   - sprite: {fileID: 21300000, guid: 195fe9348b508924d87d751b7dfea339, type: 3}
-    dialogueText: 
+    dialogueText: 'Que parecia apetitosa como nenhuma um.
+
+'
   - sprite: {fileID: 21300000, guid: 05415e519b7f77b469dce7a51c1e38cc, type: 3}
-    dialogueText: 
+    dialogueText: O miau fez aquilo de seu consumo.
   - sprite: {fileID: 21300000, guid: cb4b81c0e1e23c642830ca9b3246177d, type: 3}
-    dialogueText: 
+    dialogueText: Mas o efeito daquilo...
   - sprite: {fileID: 21300000, guid: 6f5e340736e91f046ac157dd0de4c8d5, type: 3}
-    dialogueText: 
+    dialogueText: Foi um veneno fatal.
   - sprite: {fileID: 21300000, guid: d80de9bf81b924e42ae0ed35638eae92, type: 3}
-    dialogueText: 
+    dialogueText: "Uma dor estranha come\xE7ou a surgir..."
   - sprite: {fileID: 21300000, guid: 9345b884f2a119e4bad211037685dc1f, type: 3}
-    dialogueText: 
+    dialogueText: "Ent\xE3o, uma gota vermelha tocou o ch\xE3o..."
   - sprite: {fileID: 21300000, guid: 31931c2e3fff4de48a3f9895807fef79, type: 3}
-    dialogueText: 
+    dialogueText: "E logo o sangue formou uma po\xE7a sem fim."
   - sprite: {fileID: 21300000, guid: 8718394535e2a8448ba31ef38a301fda, type: 3}
-    dialogueText: 
+    dialogueText: Em busca de uma cura, ele corre, o pobre animal,
   - sprite: {fileID: 21300000, guid: 8749133ff3605264393339482f9e6a5c, type: 3}
-    dialogueText: 
+    dialogueText: Mas...
   - sprite: {fileID: 21300000, guid: 6f6f8e72325ec8641a0e7a04ddfa3528, type: 3}
-    dialogueText: 
+    dialogueText: "Talvez n\xE3o seja t\xE3o f\xE1cil no final."
   _backgroundImage: {fileID: 2105763551}
   _dialogueTextElement: {fileID: 1436092742}
   _mainCanvasGroup: {fileID: 641647766}
