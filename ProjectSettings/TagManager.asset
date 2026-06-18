@@ -60,9 +60,6 @@ TagManager:
   - name: UI
     uniqueID: 2801480885
     locked: 0
-  - name: Minimap
-    uniqueID: 3665478587
-    locked: 0
   m_RenderingLayers:
   - Default
   m_MigratedRenderPipelines: []
