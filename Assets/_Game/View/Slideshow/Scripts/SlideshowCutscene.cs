@@ -38,6 +38,10 @@ namespace Seventh.View
         [SerializeField] private float _textFadeDuration = 0.5f;
 
 
+        [Header("Scene Loading on End")]
+        [SerializeField] private bool _loadSceneOnEnd = false;
+        [SerializeField] private string _sceneNameToLoad = "MainMenu";
+
         [Header("Events")]
         public UnityEngine.Events.UnityEvent _onCutsceneStart;
         public UnityEngine.Events.UnityEvent _onCutsceneEnd;
@@ -247,6 +251,12 @@ namespace Seventh.View
                 .OnComplete(() =>
                 {
                     gameObject.SetActive(false);
+
+                    if (_loadSceneOnEnd && !string.IsNullOrEmpty(_sceneNameToLoad))
+                    {
+                        UnityEngine.SceneManagement.SceneManager.LoadScene(_sceneNameToLoad);
+                        return;
+                    }
 
                     if (ServiceLocator.TryGet<IGameStateService>(out var gameStateService))
                     {
