@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
+
 using Seventh.Core.Services;
+using Seventh.Gameplay.Player.Effects;
 using Seventh.Core.Constants;
 using Seventh.Gameplay.Health;
 using Seventh.Gameplay.Environment;
@@ -40,13 +41,7 @@ namespace Seventh.Gameplay.Player
         private float _graceTimer;
 
         private List<Collider2D> _disabledColliders = new List<Collider2D>();
-
-        private struct SpriteColorInfo
-        {
-            public SpriteRenderer Renderer;
-            public Color OriginalColor;
-        }
-        private List<SpriteColorInfo> _spriteColors = new List<SpriteColorInfo>();
+        private PlayerVoidFallVisualEffect _voidFallVisualEffect;
 
         private bool _isInitialized;
 
@@ -88,18 +83,16 @@ namespace Seventh.Gameplay.Player
                 _originalVisualRotation = Quaternion.identity;
             }
 
-            CacheSpriteRenderers();
-            _isInitialized = true;
-        }
+            Transform visual = _movement != null && _movement.VisualModel != null ? _movement.VisualModel : transform;
+            _voidFallVisualEffect = new PlayerVoidFallVisualEffect(
+                transform,
+                visual,
+                _originalVisualScale,
+                _originalVisualRotation,
+                _fallDuration
+            );
 
-        private void CacheSpriteRenderers()
-        {
-            _spriteColors.Clear();
-            var renderers = GetComponentsInChildren<SpriteRenderer>();
-            foreach (var r in renderers)
-            {
-                _spriteColors.Add(new SpriteColorInfo { Renderer = r, OriginalColor = r.color });
-            }
+            _isInitialized = true;
         }
 
         public void ResetVoidFallState()
@@ -124,32 +117,13 @@ namespace Seventh.Gameplay.Player
             if (rb != null)
             {
                 rb.bodyType = RigidbodyType2D.Dynamic;
-#if UNITY_6000_0_OR_NEWER
                 rb.linearVelocity = Vector2.zero;
-#else
-                rb.velocity = Vector2.zero;
-#endif
             }
 
             if (_movement != null)
             {
                 _gameStateService?.ChangeGameState(GameState.Playing);
-                if (_movement.VisualModel != null)
-                {
-                    _movement.VisualModel.DOKill();
-                    _movement.VisualModel.localScale = _originalVisualScale;
-                    _movement.VisualModel.localRotation = _originalVisualRotation;
-                }
-            }
-
-            // Reset sprite colors/alphas
-            foreach (var info in _spriteColors)
-            {
-                if (info.Renderer != null)
-                {
-                    info.Renderer.DOKill();
-                    info.Renderer.color = info.OriginalColor;
-                }
+                _voidFallVisualEffect?.ResetVisuals();
             }
         }
 
@@ -289,67 +263,17 @@ namespace Seventh.Gameplay.Player
                 }
             }
 
-            CacheSpriteRenderers();
+
 
             var rb = GetComponent<Rigidbody2D>();
             if (rb != null)
             {
                 rb.bodyType = RigidbodyType2D.Kinematic;
-#if UNITY_6000_0_OR_NEWER
                 rb.linearVelocity = Vector2.zero;
-#else
-                rb.velocity = Vector2.zero;
-#endif
             }
 
-            Transform visual = _movement.VisualModel != null ? _movement.VisualModel : transform;
-            visual.DOKill();
-            transform.DOKill();
-
-            Sequence fallSeq = DOTween.Sequence();
-
-            if (_activeVoidCollider != null)
-            {
-                Vector3 targetCenter = _activeVoidCollider.bounds.center;
-                targetCenter.z = transform.position.z;
-
-                // Move towards void center, clamped to max 0.7f units (approx 1 tile size) to look natural
-                Vector3 directionToCenter = (targetCenter - transform.position).normalized;
-                float distanceToCenter = Vector3.Distance(transform.position, targetCenter);
-                float stepDistance = Mathf.Min(distanceToCenter, 0.7f);
-                Vector3 targetPosition = transform.position + directionToCenter * stepDistance;
-                targetPosition.z = transform.position.z;
-
-                // Step 1: Slide into the void
-                float slideDuration = 0.22f;
-                fallSeq.Append(transform.DOMove(targetPosition, slideDuration).SetEase(Ease.OutQuad));
-
-                // Step 2: Spin and shrink once inside the void area
-                fallSeq.Append(visual.DORotate(new Vector3(0, 0, 720f), _fallDuration, RotateMode.FastBeyond360).SetEase(Ease.InQuad));
-                fallSeq.Join(visual.DOScale(Vector3.zero, _fallDuration).SetEase(Ease.InQuad));
-
-                foreach (var info in _spriteColors)
-                {
-                    if (info.Renderer == null) continue;
-                    fallSeq.Join(info.Renderer.DOColor(Color.black, _fallDuration * 0.5f).SetEase(Ease.InQuad));
-                    fallSeq.Join(info.Renderer.DOFade(0f, _fallDuration).SetEase(Ease.InQuad));
-                }
-            }
-            else
-            {
-                // Fallback sequence if no collider was found
-                fallSeq.Append(visual.DORotate(new Vector3(0, 0, 720f), _fallDuration, RotateMode.FastBeyond360).SetEase(Ease.InQuad));
-                fallSeq.Join(visual.DOScale(Vector3.zero, _fallDuration).SetEase(Ease.InQuad));
-
-                foreach (var info in _spriteColors)
-                {
-                    if (info.Renderer == null) continue;
-                    fallSeq.Join(info.Renderer.DOColor(Color.black, _fallDuration * 0.5f).SetEase(Ease.InQuad));
-                    fallSeq.Join(info.Renderer.DOFade(0f, _fallDuration).SetEase(Ease.InQuad));
-                }
-            }
-
-            fallSeq.OnComplete(() =>
+            Transform visual = _movement != null && _movement.VisualModel != null ? _movement.VisualModel : transform;
+            _voidFallVisualEffect?.PlayFall(_activeVoidCollider, () =>
             {
                 HandleFallComplete(visual);
             });
@@ -379,21 +303,7 @@ namespace Seventh.Gameplay.Player
                 if (rb != null)
                 {
                     rb.bodyType = RigidbodyType2D.Dynamic;
-#if UNITY_6000_0_OR_NEWER
                     rb.linearVelocity = Vector2.zero;
-#else
-                    rb.velocity = Vector2.zero;
-#endif
-                }
-
-                // Reset visual properties
-                visual.localScale = _originalVisualScale;
-                visual.localRotation = _originalVisualRotation;
-
-                foreach (var info in _spriteColors)
-                {
-                    if (info.Renderer == null) continue;
-                    info.Renderer.color = info.OriginalColor;
                 }
 
                 // Reset states immediately to prevent physics/timer lock
@@ -402,9 +312,7 @@ namespace Seventh.Gameplay.Player
                 _holdTimer = 0f;
                 _graceTimer = 0.5f;
 
-                // Brief fade-in effect to feel premium
-                visual.localScale = Vector3.zero;
-                visual.DOScale(_originalVisualScale, 0.25f).SetEase(Ease.OutBack).OnComplete(() =>
+                _voidFallVisualEffect?.PlayRespawnFadeIn(() =>
                 {
                     if (_gameStateService != null)
                     {
@@ -419,11 +327,7 @@ namespace Seventh.Gameplay.Player
                 if (rb != null)
                 {
                     rb.bodyType = RigidbodyType2D.Dynamic;
-#if UNITY_6000_0_OR_NEWER
                     rb.linearVelocity = Vector2.zero;
-#else
-                    rb.velocity = Vector2.zero;
-#endif
                 }
 
                 // Player died, keep disabled and let death handles run
@@ -433,10 +337,7 @@ namespace Seventh.Gameplay.Player
 
         private void OnDestroy()
         {
-            if (_movement != null && _movement.VisualModel != null)
-            {
-                _movement.VisualModel.DOKill();
-            }
+            _voidFallVisualEffect?.CleanUp();
         }
     }
 }

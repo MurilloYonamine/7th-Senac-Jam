@@ -1,5 +1,5 @@
-using DG.Tweening;
 using Seventh.Core.Services;
+using Seventh.Gameplay.Player.Effects;
 using AudioSettings = Seventh.Core.Services.AudioSettings;
 using UnityEngine;
 using UnityEngine.VFX;
@@ -41,10 +41,7 @@ namespace Seventh.Gameplay.Player
         private IGameStateService _gameStateService;
         private PlayerDash _dash;
         private Rigidbody2D _rb;
-        private Vector3 _initialLocalPosition;
-        private Vector3 _initialLocalScale;
-        private Sequence _walkSequence;
-        private bool _animatingWalk;
+        private PlayerWalkVisualEffect _walkVisualEffect;
 
         private void Awake()
         {
@@ -58,11 +55,14 @@ namespace Seventh.Gameplay.Player
 
         private void Start()
         {
-            if (_visualModel != null)
-            {
-                _initialLocalPosition = _visualModel.localPosition;
-                _initialLocalScale = _visualModel.localScale;
-            }
+            _walkVisualEffect = new PlayerWalkVisualEffect(
+                _visualModel,
+                _useBobbing,
+                _bobHeight,
+                _bobDuration,
+                _useSquashAndStretch,
+                _squashScale
+            );
         }
 
         private void FixedUpdate()
@@ -91,7 +91,7 @@ namespace Seventh.Gameplay.Player
 
         private void OnDestroy()
         {
-            _walkSequence?.Kill();
+            _walkVisualEffect?.CleanUp();
         }
 
         private void Move()
@@ -109,76 +109,17 @@ namespace Seventh.Gameplay.Player
 
         private void UpdateWalkAnimationState()
         {
-            if (_visualModel == null) return;
+            if (_walkVisualEffect == null) return;
 
             bool isCurrentlyMoving = _movementInput.sqrMagnitude > 0.01f;
 
-            if (isCurrentlyMoving && !_animatingWalk)
+            if (isCurrentlyMoving)
             {
-                StartWalkAnimation();
+                _walkVisualEffect.Play();
             }
-            else if (!isCurrentlyMoving && _animatingWalk)
+            else
             {
-                StopWalkAnimation();
-            }
-        }
-
-        private void StartWalkAnimation()
-        {
-            _animatingWalk = true;
-            PlayWalkStep();
-        }
-
-        private void PlayWalkStep()
-        {
-            if (!_animatingWalk || _visualModel == null) return;
-
-            _walkSequence = DOTween.Sequence();
-
-            if (_useBobbing)
-            {
-                _walkSequence.Append(_visualModel.DOLocalMoveY(_initialLocalPosition.y + _bobHeight, _bobDuration / 2f).SetEase(Ease.OutQuad));
-                _walkSequence.Append(_visualModel.DOLocalMoveY(_initialLocalPosition.y, _bobDuration / 2f).SetEase(Ease.InQuad));
-            }
-
-            if (_useSquashAndStretch)
-            {
-                Sequence scaleSeq = DOTween.Sequence();
-                scaleSeq.Append(_visualModel.DOScale(new Vector3(_initialLocalScale.x * _squashScale.x, _initialLocalScale.y * _squashScale.y, _initialLocalScale.z), _bobDuration * 0.3f).SetEase(Ease.OutQuad));
-                scaleSeq.Append(_visualModel.DOScale(_initialLocalScale, _bobDuration * 0.7f).SetEase(Ease.InOutQuad));
-
-                if (_useBobbing)
-                {
-                    _walkSequence.Join(scaleSeq);
-                }
-                else
-                {
-                    _walkSequence.Append(scaleSeq);
-                }
-            }
-
-            // Fallback se nenhum estiver ativado
-            if (!_useBobbing && !_useSquashAndStretch)
-            {
-                _walkSequence.AppendInterval(_bobDuration);
-            }
-
-            _walkSequence.OnComplete(() =>
-            {
-                PlayWalkStep();
-            });
-        }
-
-        private void StopWalkAnimation()
-        {
-            _animatingWalk = false;
-            _walkSequence?.Kill();
-
-            if (_visualModel != null)
-            {
-                _visualModel.DOKill();
-                _visualModel.localPosition = _initialLocalPosition;
-                _visualModel.localScale = _initialLocalScale;
+                _walkVisualEffect.Stop();
             }
         }
 
