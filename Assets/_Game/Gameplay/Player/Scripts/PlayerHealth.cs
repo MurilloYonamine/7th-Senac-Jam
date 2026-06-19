@@ -293,11 +293,7 @@ namespace Seventh.Gameplay.Player
 
             if (TryGetComponent<Rigidbody2D>(out var rb))
             {
-#if UNITY_6000_0_OR_NEWER
                 rb.linearVelocity = Vector2.zero;
-#else
-                rb.velocity = Vector2.zero;
-#endif
             }
 
             if (_visualModel != null)

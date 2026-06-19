@@ -2,6 +2,7 @@ using System.Collections;
 using DG.Tweening;
 using Seventh.Core.Events;
 using Seventh.Core.Services;
+using Seventh.Gameplay.Player.Effects;
 using AudioSettings = Seventh.Core.Services.AudioSettings;
 using UnityEngine;
 using Unity.Cinemachine;
@@ -19,6 +20,7 @@ namespace Seventh.Gameplay.Player
         private Coroutine _flashCoroutine;
         private Material _originalMaterial;
         private Material _currentFlashMaterial;
+        private PlayerDashVisualEffect _dashVisualEffect;
 
         [Header("Dash Settings")]
         [SerializeField] private float _dashDistance = 5;
@@ -55,6 +57,8 @@ namespace Seventh.Gameplay.Player
             {
                 _originalMaterial = _spriteRenderer.material;
             }
+
+            _dashVisualEffect = new PlayerDashVisualEffect(_spriteRenderer);
         }
 
         private void Update()
@@ -129,10 +133,7 @@ namespace Seventh.Gameplay.Player
                 .OnComplete(() => 
                 {
                     IsDashing = false;
-                    if (_spriteRenderer != null)
-                    {
-                        _spriteRenderer.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutElastic);
-                    }
+                    _dashVisualEffect?.ResetScale();
                 });
         }
 
@@ -141,10 +142,9 @@ namespace Seventh.Gameplay.Player
             if (!IsDashing) return;
             IsDashing = false;
             transform.DOKill();
+            _dashVisualEffect?.ResetScaleImmediately();
             if (_spriteRenderer != null)
             {
-                _spriteRenderer.transform.DOKill();
-                _spriteRenderer.transform.localScale = Vector3.one;
                 if (_originalMaterial != null)
                 {
                     _spriteRenderer.material = _originalMaterial;
@@ -164,7 +164,7 @@ namespace Seventh.Gameplay.Player
 
         private void ApplyDashEffects(Vector3 direction)
         {
-            ApplySquashAndStretch(direction);
+            _dashVisualEffect?.ApplySquashAndStretch(direction);
             
             if (_flashCoroutine != null)
             {
@@ -185,20 +185,7 @@ namespace Seventh.Gameplay.Player
             _impulseSource?.GenerateImpulse();
         }
 
-        private void ApplySquashAndStretch(Vector3 direction)
-        {
-            Vector3 dashScale = Vector3.one;
-            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
-            {
-                dashScale = new Vector3(1.3f, 0.7f, 1f);
-            }
-            else
-            {
-                dashScale = new Vector3(0.7f, 1.3f, 1f);
-            }
 
-            _spriteRenderer.transform.DOScale(dashScale, 0.05f);
-        }
 
         private void StartCooldown()
         {
@@ -231,6 +218,7 @@ namespace Seventh.Gameplay.Player
 
         private void OnDestroy()
         {
+            _dashVisualEffect?.CleanUp();
             if (_currentFlashMaterial != null)
             {
                 Destroy(_currentFlashMaterial);
